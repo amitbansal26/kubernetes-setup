@@ -17,15 +17,17 @@ fi
 
 username=$1
 password=$2
+
+echo "######################################################################################################"
+echo $username
+echo $password
+echo "######################################################################################################"
+
 sudo subscription-manager register --username $username --password $password --auto-attach
 #1. Step 1
 echo "Swap off"
 sudo swapoff -a
 sudo sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab
-
-sudo service iptables save
-sudo service iptables stop
-sudo chkconfig iptables off
 
 #2. Step 2
 echo "Firewall off"
@@ -56,7 +58,7 @@ sudo sysctl --system
 # install conatainerd runtime
 sudo dnf config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
 sudo dnf install containerd.io -y
-
+#sudo yum localinstall -y *.rpm 
 
 containerd config default | sudo tee /etc/containerd/config.toml >/dev/null 2>&1
 sudo sed -i 's/SystemdCgroup \= false/SystemdCgroup \= true/g' /etc/containerd/config.toml

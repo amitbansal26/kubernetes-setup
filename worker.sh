@@ -18,9 +18,9 @@ username=$1
 password=$2
 sudo subscription-manager register --username $username --password $password --auto-attach
 echo "######### Join node to Kubernetes Cluster ######"
-yum install -y sshpass >/dev/null
-sshpass -p "kubeadmin" scp -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no kmaster1.cloudnativeapps.in:/joincluster.sh /joincluster.sh >/dev/null 2>&1
-bash /joincluster.sh >/dev/null
+sudo yum install -y sshpass >/dev/null
+sudo sshpass -p "kubeadmin" scp -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no master1.cloudnativeapps.in:/joincluster.sh /joincluster.sh >/dev/null 2>&1
+sudo bash /joincluster.sh >/dev/null
 
 sudo subscription-manager remove --all
 sudo subscription-manager unregister

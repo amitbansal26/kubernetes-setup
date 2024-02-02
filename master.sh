@@ -19,11 +19,13 @@ password=$2
 sudo subscription-manager register --username $username --password $password --auto-attach
 
 echo "##### Pull the container images #####"
-kubeadm config images pull >/dev/null
-kubeadm init --apiserver-advertise-address=172.16.16.100 --pod-network-cidr=192.168.0.0/16 >> /root/kubeinit.log 2>/dev/null
-kubectl --kubeconfig=/etc/kubernetes/admin.conf create -f https://raw.githubusercontent.com/projectcalico/calico/v3.27.0/manifests/tigera-operator.yaml >/dev/null
-kubectl --kubeconfig=/etc/kubernetes/admin.conf create -f https://raw.githubusercontent.com/projectcalico/calico/v3.27.0/manifests/custom-resources.yaml >/dev/null
-kubeadm token create --print-join-command > /joincluster.sh
+sudo kubeadm config images pull >/dev/null
+sudo kubeadm init --apiserver-advertise-address=172.16.16.100 --pod-network-cidr=20.96.0.0/12 >> /root/kubeinit.log 2>/dev/null
+#sudo kubectl --kubeconfig=/etc/kubernetes/admin.conf create -f https://raw.githubusercontent.com/projectcalico/calico/v3.27.0/manifests/tigera-operator.yaml >/dev/null
+#sudo kubectl --kubeconfig=/etc/kubernetes/admin.conf create -f https://raw.githubusercontent.com/projectcalico/calico/v3.27.0/manifests/custom-resources.yaml >/dev/null
+sudo kubectl --kubeconfig=/etc/kubernetes/admin.conf apply -f https://raw.githubusercontent.com/projectcalico/calico/v3.27.0/manifests/calico.yaml>/dev/null
+
+sudo kubeadm token create --print-join-command > /joincluster.sh
 
 sudo subscription-manager remove --all
 sudo subscription-manager unregister
