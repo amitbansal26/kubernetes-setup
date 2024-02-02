@@ -1,5 +1,23 @@
 #!/bin/bash
+if [ $# -eq 0 ]
+  then
+    echo "No arguments supplied"
+    exit 1 
+fi
+if [ -z "$1" ]
+  then
+    echo "No username supplied"
+    exit 1
+fi
+if [ -z "$2" ]
+  then
+    echo "No password supplied"
+    exit 1
+fi
 
+username=$1
+password=$2
+sudo subscription-manager register --username $username --password $password --auto-attach
 #1. Step 1
 echo "Swap off"
 sudo swapoff -a
@@ -59,5 +77,22 @@ EOF
 sudo yum install -y kubelet kubeadm kubectl --disableexcludes=kubernetes
 sudo systemctl enable --now kubelet
 
-#sudo kubeadm init --control-plane-endpoint=k8s-master01
+echo "ssh password authentication"
+sed -i 's/^PasswordAuthentication .*/PasswordAuthentication yes/' /etc/ssh/sshd_config
+echo 'PermitRootLogin yes' >> /etc/ssh/sshd_config
+systemctl reload sshd
 
+echo "root password"
+echo -e "kubeadmin\nkubeadmin" | passwd root >/dev/null 2>&1
+echo "export TERM=xterm" >> /etc/bash.bashrc
+
+echo "/etc/hosts file"
+cat >>/etc/hosts<<EOF
+172.16.16.100   master1.cloudnativeapps.in    master1
+172.16.16.101   worker1.cloudnativeapps.in    worker1
+172.16.16.102   worker2.cloudnativeapps.in    worker2
+EOF
+
+sudo subscription-manager remove --all
+sudo subscription-manager unregister
+sudo subscription-manager clean
