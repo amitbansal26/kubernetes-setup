@@ -1,13 +1,13 @@
 
 ENV['VAGRANT_NO_PARALLEL'] = 'yes'
-username="########"
-password="#########"
+username="amitbansal26"
+password="amit#1234567890"
 VAGRANT_BOX         = "generic/rhel9"
 VAGRANT_BOX_VERSION = "4.3.12"
 CPUS_MASTER_NODE    = 2
 CPUS_WORKER_NODE    = 2
 MEMORY_MASTER_NODE  = 2048
-MEMORY_WORKER_NODE  = 2048
+MEMORY_WORKER_NODE  = 4096
 WORKER_NODES_COUNT  = 2
 
 Vagrant.configure(2) do |config|
