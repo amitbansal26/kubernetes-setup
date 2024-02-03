@@ -41,6 +41,8 @@ sudo firewall-cmd --reload
 sudo firewall-cmd --permanent --add-port={179,10250,30000-32767}/tcp
 sudo firewall-cmd --permanent --add-port=4789/udp
 sudo firewall-cmd --reload
+systemctl stop firewalld
+systemctl disable firewalld
 #Add Linux Kernel Modules and Parameters
 sudo tee /etc/modules-load.d/containerd.conf <<EOF
 overlay

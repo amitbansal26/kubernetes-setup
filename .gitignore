@@ -1,2 +1,6 @@
 .vagrant/
 *.rpm
+*.box
+basebox/
+nexus-oss/
+nginx-ingress/
