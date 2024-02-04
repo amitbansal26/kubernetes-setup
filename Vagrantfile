@@ -1,7 +1,7 @@
 
 ENV['VAGRANT_NO_PARALLEL'] = 'yes'
-username="amitbansal26"
-password="amit#1234567890"
+username=""
+password=""
 VAGRANT_BOX         = "generic/rhel9"
 VAGRANT_BOX_VERSION = "4.3.12"
 CPUS_MASTER_NODE    = 2
