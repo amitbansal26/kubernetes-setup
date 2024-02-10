@@ -1,0 +1,94 @@
+ENV['VAGRANT_NO_PARALLEL'] = 'yes'
+username=""
+password=""
+VAGRANT_BOX         = "generic/rhel9"
+VAGRANT_BOX_VERSION = "4.3.12"
+CPUS_MASTER_NODE    = 2
+CPUS_WORKER_NODE    = 2
+MEMORY_MASTER_NODE  = 2048
+MEMORY_WORKER_NODE  = 4096
+WORKER_NODES_COUNT  = 2
+
+Vagrant.configure(2) do |config|
+
+# Define master Section
+   # config.vm.provision "shell", path: "initialize.sh", args: [username, password]
+    #config.vm.provision "file", source: "/home/amit/workarea/remote/kubernetes-setup/containerd.io-1.6.28-3.1.el9.x86_64.rpm", destination: "."
+    #config.vm.provision "file", source: "/home/amit/workarea/remote/kubernetes-setup/container-selinux-2.221.0-1.el9.noarch.rpm", destination: "."
+   # config.vm.define "master1" do |machine|
+   #  machine.vm.box = VAGRANT_BOX
+   #  machine.vm.box_check_update = false
+   #  machine.vm.box_version = VAGRANT_BOX_VERSION
+   #  machine.vm.hostname = "master1.cloudnativeapps.in"     
+   #  machine.vm.network "private_network", ip: "172.16.16.100"
+   #  machine.vm.provider :virtualbox do |v|
+   #   v.name    = "master1"
+   #   v.memory  = MEMORY_MASTER_NODE
+   #   v.cpus    = CPUS_MASTER_NODE
+   # end
+
+   # machine.vm.provider :libvirt do |v|
+   #   v.memory  = MEMORY_MASTER_NODE
+   #   v.nested  = true
+   #   v.cpus    = CPUS_MASTER_NODE
+   # end
+   # machine.vm.provision "shell", path: "master.sh" , args: [username, password]
+
+   # end  
+
+
+  mastercount=3
+  (1..mastercount).each do |i|
+
+    config.vm.define "master#{i}" do |masternode|
+
+      masternode.vm.box               = "amitbansal26/rhel9k8s"
+      masternode.vm.box_check_update  = false
+      masternode.vm.box_version       = "1"
+      masternode.vm.hostname          = "master#{i}.cloudnativeapps.in"
+
+      masternode.vm.network "private_network", ip: "172.16.16.10#{i}"
+      masternode.vm.provider :virtualbox do |v|
+        v.name   = "master#{i}"
+        v.memory = 2048
+        v.cpus   = 2
+      end
+      masternode.vm.provider :libvirt do |v|
+        v.nested  = true
+        v.memory  = 2048
+        v.cpus    = 2
+      end
+      masternode.vm.provision "shell", path: "initialize.sh", args: [username, password]
+      masternode.vm.provision "shell", path: "master.sh" , args: [username, password, "172.16.16.10#{i}"]
+    end
+  end
+  lbcount = 2
+
+  (1..lbcount).each do |i|
+ 
+    config.vm.define "loadbalancer#{i}" do |lb|
+ 
+      lb.vm.box               = "generic/rhel9"
+      lb.vm.box_check_update  = false
+      lb.vm.box_version       = VAGRANT_BOX_VERSION
+      lb.vm.hostname          = "loadbalancer#{i}.cloudnativeapps.in"
+ 
+      lb.vm.network "private_network", ip: "172.16.16.5#{i}"
+ 
+      lb.vm.provider :virtualbox do |v|
+        v.name   = "loadbalancer#{i}"
+        v.memory = 512
+        v.cpus   = 1
+      end
+ 
+      lb.vm.provider :libvirt do |v|
+        v.memory  = 512
+        v.cpus    = 1
+      end
+      lb.vm.provision "shell", path: "loadbalancer.sh" , args: [username, password]
+    end
+ 
+  end
+
+
+end
