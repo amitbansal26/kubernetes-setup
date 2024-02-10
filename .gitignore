@@ -4,3 +4,4 @@
 basebox/
 nexus-oss/
 nginx-ingress/
+k8-ansible/.vault_pass

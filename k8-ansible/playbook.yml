@@ -1,0 +1,7 @@
+---
+- hosts: k8s-master
+  name: Setting up kubernetes master node
+  tasks:
+    - name: Running Kubernetes Role
+      include_role:
+        name: kubernetes

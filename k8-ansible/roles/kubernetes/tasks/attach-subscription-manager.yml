@@ -1,5 +1,6 @@
 ---
 - name: Register and Auto attach username
+  become: true
   community.general.redhat_subscription:
     state: present
     username: "{{ rhsm_username }}"

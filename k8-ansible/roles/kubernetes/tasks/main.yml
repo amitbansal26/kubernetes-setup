@@ -1,0 +1,72 @@
+---
+- name: redhat variables
+  include_vars: "{{ ansible_os_family }}.yml"
+
+- name: Credentials Redhat
+  include_vars: vault.yml
+
+- include_tasks: attach-subscription-manager.yml
+- include_tasks: ip-tables-bridge.yml
+
+- include_tasks: firewall-disable.yml
+
+
+- name: Ensure dependencies are installed.
+  become: true
+  package: name=curl state=present
+
+- name: Adding yum kubernetes repository
+  become: true
+  yum_repository:
+    name: Kubernetes
+    baseurl: "https://pkgs.k8s.io/core:/stable:/v{{ kubernetes_version }}/rpm/"
+    enabled: yes
+    gpgcheck: yes
+    description: Kubernetes yum repo
+    gpgkey: "https://pkgs.k8s.io/core:/stable:/v{{ kubernetes_version }}/rpm/repodata/repomd.xml.key"
+   # exclude: kubelet kubeadm kubectl cri-tools kubernetes-cni
+
+- name: Install Kubernetes packages.
+  become: true
+  package:
+    name: "{{ item.name | default(item) }}"
+    state: "{{ item.state | default('present') }}"
+  notify: restart kubelet
+  with_items: "{{ kubernetes_packages }}"
+
+- name: Adding Docker GPG
+  become: true
+  rpm_key:
+    key: "{{ docker_yum_gpg_key }}" 
+    state: present
+
+- name: Add Docker repository.
+  become: true
+  get_url:
+    url: "https://download.docker.com/linux/centos/docker-ce.repo"
+    dest: '/etc/yum.repos.d/docker-ce.repo'
+    owner: root
+    group: root
+    mode: 0644
+
+  
+- name: Ensure container-selinux is installed.
+  become: true
+  package:
+    name: container-selinux
+    state: present   
+
+- name: Ensure containerd is installed.
+  become: true
+  package:
+    name: "{{ containerd_package }}"
+    state: present
+
+- name: containerd enabled
+  become: true
+  service:
+    name: containerd
+    state: "{{ containerd_service_state }}"
+    enabled: "{{ containerd_service_enabled }}"     
+
+- include_tasks: detach-subscription-manager.yml

@@ -1,0 +1,4 @@
+---
+- name: Disable Firewall
+  firewalld:
+    state: disabled

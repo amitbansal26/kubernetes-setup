@@ -1,5 +1,18 @@
 ---
+
+- name: Net Filter
+  become: true
+  modprobe:
+    name: br_netfilter
+    state: present
+
+- name: Overlay Kernel Module
+  become: true
+  modprobe:
+    name: overlay
+    state: present
 - name: procps-ng installation
+  become: true
   package: 
     name: "{{ procps_package }}"
     state: present
@@ -7,6 +20,7 @@
     ansible_distribution != 'Debian'
 
 - name: iptables bridged traffic
+  become: true
   sysctl:
     name: "{{ item }}"
     value: '1'

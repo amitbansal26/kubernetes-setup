@@ -10,7 +10,7 @@ kubernetes_packages:
     state: present
 
 kubernetes_version: '1.29'
-kubernetes_version_rhel_package: '1.29.1' 
+kubernetes_version_rhel_package: '1.29.1'
 
 kubernetes_pod_network:
   # Calico CNI.
@@ -29,3 +29,8 @@ kubernetes_config_cluster_configuration:
   networking:
     podSubnet: "{{ kubernetes_pod_network.cidr }}"
   kubernetesVersion: "{{ kubernetes_version_kubeadm }}"
+
+containerd_package: containerd.io
+docker_yum_gpg_key: https://download.docker.com/linux/centos/gpg
+containerd_service_state: started
+containerd_service_enabled: true

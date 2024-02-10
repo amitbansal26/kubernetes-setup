@@ -1,0 +1,4 @@
+[k8s-master]
+172.16.16.101 ansible_user=vagrant ansible_ssh_private_key_file=/home/amit/workarea/somevagrantmachines/.vagrant/machines/master1/libvirt/private_key
+172.16.16.102 ansible_user=vagrant ansible_ssh_private_key_file=/home/amit/workarea/somevagrantmachines/.vagrant/machines/master2/libvirt/private_key
+172.16.16.103 ansible_user=vagrant ansible_ssh_private_key_file=/home/amit/workarea/somevagrantmachines/.vagrant/machines/master3/libvirt/private_key
