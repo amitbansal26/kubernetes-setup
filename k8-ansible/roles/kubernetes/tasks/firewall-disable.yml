@@ -1,4 +1,6 @@
 ---
 - name: Disable Firewall
-  firewalld:
-    state: disabled
+  become: true
+  shell: |
+    systemctl stop firewalld
+    systemctl disable firewalld

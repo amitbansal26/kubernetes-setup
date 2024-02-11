@@ -1,8 +1,0 @@
----
-apiVersion: kubeadm.k8s.io/v1beta3
-kind: ClusterConfiguration
-networking:
-  podSubnet: "10.244.0.0/24"
-kubernetesVersion: "{{ kubernetes_version_kubeadm }}"
-controlPlaneEndPoint: "virtualip:6443"
-  

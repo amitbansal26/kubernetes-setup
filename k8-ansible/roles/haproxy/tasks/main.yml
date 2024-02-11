@@ -1,7 +1,10 @@
 ---
-- name: install haproxy
-  become: true
-  shell: sudo dnf install haproxy keepalived -y
+- name: Install haproxy and keepalived
+  package:
+    name: 
+      - haproxy
+      - keepalived
+    state: present
 
 - name: Copy HAproxy configuration file script
   template: 

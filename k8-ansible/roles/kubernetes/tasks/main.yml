@@ -61,12 +61,39 @@
   package:
     name: "{{ containerd_package }}"
     state: present
-
+  register: ctdInst
 - name: containerd enabled
   become: true
   service:
     name: containerd
     state: "{{ containerd_service_state }}"
     enabled: "{{ containerd_service_enabled }}"     
+  when: ctdInst is succeeded
 
+- name: Setup containerd
+  become: true
+  shell: |
+    pause_image=kubeadm config images list | grep pause:
+
+    containerd config default | sudo tee /etc/containerd/config.toml >/dev/null 2>&1
+    sed -i 's/SystemdCgroup \= false/SystemdCgroup \= true/g' /etc/containerd/config.toml
+    sed -i "s/pause:3.6/pause:3.9/g" /etc/containerd/config.toml
+    systemctl restart containerd
+    systemctl enable containerd
+    systemctl status containerd
+
+- name: Swapoff and Selinux off
+  become: true
+  shell: |
+    swapoff -a
+    sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab
+    setenforce 0
+    sed -i --follow-symlinks 's/SELINUX=enforcing/SELINUX=permissive/g' /etc/sysconfig/selinux
+
+- name: Enable kubelet
+  become: true
+  shell: |
+     systemctl enable --now kubelet
+
+- include_tasks: cluster-cp-init.yml
 - include_tasks: detach-subscription-manager.yml
