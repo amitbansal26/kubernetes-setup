@@ -96,4 +96,5 @@
      systemctl enable --now kubelet
 
 - include_tasks: cluster-cp-init.yml
-- include_tasks: detach-subscription-manager.yml
+- include_tasks: cp-init-master-replicas.yml 
+#- include_tasks: detach-subscription-manager.yml

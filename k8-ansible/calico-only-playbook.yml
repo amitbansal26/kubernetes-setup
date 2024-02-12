@@ -1,0 +1,7 @@
+---
+- hosts: k8s-master
+  name: Setting up calico
+  tasks:
+    - name: Running calico network
+      include_role:
+        name: calico

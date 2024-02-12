@@ -1,0 +1,54 @@
+---
+
+- name: Enable kubelet
+  become: true
+  shell: |
+     systemctl stop kubelet
+  delegate_to: '{{ item }}'
+  with_items: "{{groups['k8s-master-replicas']}}"     
+
+- name: "Reset Cluster Primary Replicas"
+  become: true
+  command: 'kubeadm reset --force'
+  delegate_to: '{{ item }}'
+  with_items: "{{groups['k8s-master-replicas']}}"
+
+- name: "Create kubernetes folders"
+  become: true
+  file:
+    path: /etc/kubernetes/pki/etcd
+    state: directory
+    mode: 0640
+    owner: root
+    group: root
+  delegate_to: '{{ item }}'
+  with_items: "{{groups['k8s-master-replicas']}}"
+
+- name: "Push Kubernetes Master PKI files to master replicas"
+  become: true
+  copy: 
+    src: /tmp/kubeadm-ha/
+    dest: /etc/kubernetes/
+    owner: root
+    group: root
+    mode: preserve
+  delegate_to: '{{ item }}'
+  with_items: "{{groups['k8s-master-replicas']}}"
+
+- name: Generate master join token
+  shell: kubeadm token create --print-join-command
+  register: kubeadm_join_cmd
+  delegate_to: "{{groups['k8s-master'][0]}}" 
+
+- set_fact:
+    kubeadm_join: "{{ kubeadm_join_cmd.stdout }}"
+
+
+- name: Join Master replicas to cluster
+  become: true
+  shell: "{{ kubeadm_join }} --control-plane"
+  delegate_to: '{{ item }}'
+  with_items: "{{groups['k8s-master-replicas']}}"
+
+- pause:
+    prompt: "Wait for containers to Pull and install"

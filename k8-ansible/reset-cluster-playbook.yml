@@ -1,0 +1,7 @@
+---
+- hosts: k8s-master
+  name: Reset
+  tasks:
+    - name: Running calico network
+      include_role:
+        name: kubernetes-reset

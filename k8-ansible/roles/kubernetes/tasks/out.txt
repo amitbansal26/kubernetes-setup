@@ -1,0 +1,9 @@
+- name: Update /etc/hosts
+  become: true
+  blockinfile:
+      path: /etc/hosts
+      create: yes
+      block: |
+        {% for item in ansible_play_batch %}
+        {{ hostvars[item].ansible_ssh_host }}   {{ item }}    
+        {% endfor %}

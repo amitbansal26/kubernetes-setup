@@ -1,10 +1,11 @@
 ---
-- hosts: k8s_haproxy
-  name: Setting up haproxy keepalived
+- hosts: k8s-master
+  name: Setting up hosts values
   tasks:
-    - name: Running haproxy Role
+    - name: Running kubernete Role
       include_role:
-        name: haproxy 
+        name: update-hosts
+
 - hosts: k8s-master
   name: Setting up kubernetes master node
   tasks:

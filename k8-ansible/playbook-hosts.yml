@@ -1,0 +1,7 @@
+---
+- hosts: k8s-master
+  name: Setting up hosts values
+  tasks:
+    - name: Running kubernete Role
+      include_role:
+        name: update-hosts

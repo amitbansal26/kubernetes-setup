@@ -1,4 +1,4 @@
-sudo cat <<EOF >/etc/haproxy/haproxy.cfg
+cat <<EOF >/etc/haproxy/haproxy.cfg
 frontend kubernetes-frontend
   bind *:6443
   mode tcp

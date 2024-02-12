@@ -17,20 +17,20 @@ vrrp_script chk_haproxy {
 vrrp_instance haproxy-vip {
   state BACKUP
   priority 100
-  interface ens192                       # Network card
+  interface eth1                       # Network card
   virtual_router_id 60
   advert_int 1
   authentication {
     auth_type PASS
     auth_pass 1111
   }
-  unicast_src_ip {{ HAPROXY_1_IP }}     # The IP address of this machine
+  unicast_src_ip {{ proxy1 }}     # The IP address of this machine
   unicast_peer {
-    {{ HAPROXY_2_IP }}                        # The IP address of peer machines
+    {{ proxy2 }}                        # The IP address of peer machines
   }
 
   virtual_ipaddress {
-    <VIRTUAL_IP>/24                  # The VIP address
+    172.16.16.100/24                 # The VIP address
   }
 
   track_script {

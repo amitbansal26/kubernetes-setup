@@ -1,0 +1,21 @@
+---
+- name: Configure Calico networking.
+  command: "kubectl apply -f https://raw.githubusercontent.com/projectcalico/calico/v3.27.0/manifests/tigera-operator.yaml"
+  register: calico_result
+  changed_when: "'created' in calico_result.stdout"
+  when: kubernetes_pod_network.cni == 'calico'
+  until: calico_result is not failed
+  retries: 12
+  delay: 5
+
+- name: Create Calico Config
+  become: true
+  template:
+    src: "calico.j2"
+    dest: "{{ calico_config_path }}"
+
+
+- name: Configure CIDR Range
+  command: kubectl --kubeconfig=/etc/kubernetes/admin.conf apply -f https://raw.githubusercontent.com/amitbansal26/kubernetes-setup/main/calico.yaml"
+   
+  

@@ -1,0 +1,5 @@
+---
+# tasks file for kubernetes-reset
+- name: "Reset Cluster Primary"
+  become: true
+  command: 'kubeadm reset --force'

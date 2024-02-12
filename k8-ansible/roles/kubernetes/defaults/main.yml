@@ -17,6 +17,8 @@ kubernetes_pod_network:
   cni: 'calico'
   cidr: '20.96.0.0/12'
 
+kubernetes_apiserver_advertise_address: '172.16.16.101'  
+
 kubernetes_kubeadm_kubelet_config_file_path: '/etc/kubernetes/kubeadm-kubelet-config.yaml'
 kubernetes_config_kubelet_configuration:
   cgroupDriver: "systemd"
@@ -29,7 +31,7 @@ kubernetes_config_cluster_configuration:
   networking:
     podSubnet: "{{ kubernetes_pod_network.cidr }}"
   kubernetesVersion: "{{ kubernetes_version_kubeadm }}"
-#controlPlaneEndpoint: "176.16.16.100:6443"
+  controlPlaneEndpoint: "172.16.16.100:6443"
 
 containerd_package: containerd.io
 docker_yum_gpg_key: https://download.docker.com/linux/centos/gpg

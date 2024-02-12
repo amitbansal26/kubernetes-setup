@@ -6,3 +6,4 @@
     username: "{{ rhsm_username }}"
     password: "{{ rhsm_password }}"
     auto_attach: true
+    
