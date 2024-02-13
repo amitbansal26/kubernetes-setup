@@ -1,4 +1,4 @@
 ---
 # defaults file for calico
 pod_cidr_range: '20.96.0.0/12'
-calico_config_path: '/home/vagrant'
+calico_config_path: '/home/vagrant/calico.yml'
