@@ -1,5 +1,5 @@
 ---
-- hosts: k8s-master
+- hosts: k8s-master[0]
   name: Setting up calico
   tasks:
     - name: Running calico network

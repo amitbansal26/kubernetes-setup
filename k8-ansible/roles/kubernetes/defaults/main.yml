@@ -33,6 +33,7 @@ kubernetes_config_cluster_configuration:
   kubernetesVersion: "{{ kubernetes_version_kubeadm }}"
   controlPlaneEndpoint: "172.16.16.100:6443"
 
+
 containerd_package: containerd.io
 docker_yum_gpg_key: https://download.docker.com/linux/centos/gpg
 containerd_service_state: started

@@ -1,13 +1,80 @@
 ---
+- hosts: localhost
+  connection: local
+  gather_facts: no
+  tasks:
+    - name: Delete directory
+      become: true
+      become_user: root
+      file:
+        path: /tmp/kubeadm-ha/
+        state: absent
+
+- hosts: all
+  name: Setting up hosts values
+  tasks:
+    - name: Running Hosts Role
+      include_role:
+        name: update-hosts
+- hosts: all
+  name: attach Subscription Manager
+  tasks:
+    - name: Subscription Manager attach
+      include_role:
+        name: attach-subscription
+
+- hosts: k8s-master, k8s-worker
+  name: config ip tables
+  tasks:
+    - name: Config ip tables
+      include_role:
+        name: config-iptables
+
+- hosts: k8s-master, k8s-worker
+  name: disable firewall
+  tasks:
+    - name: Disable Firewall
+      include_role:
+        name: disable-firewall
+
 - hosts: k8s_haproxy
   name: Setting up haproxy keepalived
   tasks:
     - name: Running haproxy Role
       include_role:
         name: haproxy 
+
+- hosts: k8s-master, k8s-worker
+  name: Setup base kubernetes packages
+  tasks:
+    - name: Running base kubernetes installation
+      include_role:
+        name: base-install
+
 - hosts: k8s-master
   name: Setting up kubernetes master node
   tasks:
     - name: Running kubernete Role
       include_role:
         name: kubernetes
+
+- hosts: k8s-master-replicas
+  name: Join Replica node
+  tasks:
+    - name: Running kubernete Role
+      include_role:
+        name: master-replica-role
+
+- hosts: k8s-worker
+  name: Worker join
+  tasks:
+    - name: Running Worker Role
+      include_role:
+        name: worker-join-cluster     
+
+- hosts: k8s-master[0]
+  name: Setting up calico
+  tasks:
+    - name: Running calico network
+      include_role:
+        name: calico

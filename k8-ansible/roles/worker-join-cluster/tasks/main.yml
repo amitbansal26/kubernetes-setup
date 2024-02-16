@@ -1,0 +1,12 @@
+---
+- name: Generate master join token
+  shell: kubeadm token create --print-join-command
+  register: kubeadm_join_cmd
+  delegate_to: "{{groups['k8s-master'][0]}}" 
+
+- set_fact:
+    kubeadm_join: "{{ kubeadm_join_cmd.stdout }}"
+    
+- name: Join Worker Nodes to cluster
+  become: true
+  shell: "{{ kubeadm_join }}"

@@ -78,10 +78,3 @@
     systemctl enable haproxy
     systemctl restart keepalived
     systemctl enable keepalived
-
-- name: DRegister
-  become: true
-  community.general.redhat_subscription:
-    state: absent
-    username: "{{ rhsm_username }}"
-    password: "{{ rhsm_password }}"

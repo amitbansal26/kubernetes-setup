@@ -1,0 +1,4 @@
+---
+- name: restart kubelet
+  become: true
+  service: name=kubelet state=restarted

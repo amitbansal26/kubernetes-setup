@@ -1,0 +1,7 @@
+---
+- hosts: k8s-worker
+  name: Worker join
+  tasks:
+    - name: Running Worker Role
+      include_role:
+        name: worker-join-cluster  

@@ -1,0 +1,42 @@
+---
+kubernetes_packages:
+  - name: kubelet
+    state: present
+  - name: kubectl
+    state: present
+  - name: kubeadm
+    state: present
+  - name: kubernetes-cni
+    state: present
+
+kubernetes_version: '1.29'
+kubernetes_version_rhel_package: '1.29.1'
+
+kubernetes_pod_network:
+  # Calico CNI.
+  cni: 'calico'
+  cidr: '20.96.0.0/12'
+
+kubernetes_apiserver_advertise_address: '172.16.16.101'  
+
+kubernetes_kubeadm_kubelet_config_file_path: '/etc/kubernetes/kubeadm-kubelet-config.yaml'
+kubernetes_config_kubelet_configuration:
+  cgroupDriver: "systemd"
+
+kubernetes_config_init_configuration:
+  localAPIEndpoint:
+    advertiseAddress: "{{ kubernetes_apiserver_advertise_address | default(ansible_default_ipv4.address, true) }}"
+
+kubernetes_config_cluster_configuration:
+  networking:
+    podSubnet: "{{ kubernetes_pod_network.cidr }}"
+  kubernetesVersion: "{{ kubernetes_version_kubeadm }}"
+  controlPlaneEndpoint: "172.16.16.100:6443"
+
+
+containerd_package: containerd.io
+docker_yum_gpg_key: https://download.docker.com/linux/centos/gpg
+containerd_service_state: started
+containerd_service_enabled: true
+
+kubernetes_version_kubeadm: 'v1.29.1'
