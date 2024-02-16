@@ -43,7 +43,6 @@
 - set_fact:
     kubeadm_join: "{{ kubeadm_join_cmd.stdout }}"
 
-
 - name: Join Master replicas to cluster
   become: true
   shell: "{{ kubeadm_join }} --control-plane"

@@ -4,6 +4,11 @@
   register: st
   delegate_to: "{{groups['k8s-master'][0]}}"
 
+- name: Enable kubelet
+  become: true
+  shell: |
+     systemctl enable --now kubelet
+  delegate_to: "{{groups['k8s-master'][0]}}"   
 
 - name: Make config directory
   become: true
@@ -84,4 +89,4 @@
     flat: yes
   with_items:
     - admin.conf
-  delegate_to: "{{groups['k8s-master'][0]}}"  
+  delegate_to: "{{groups['k8s-master'][0]}}"

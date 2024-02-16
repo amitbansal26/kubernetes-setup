@@ -10,3 +10,6 @@ master3 ansible_ssh_host=172.16.16.103 ansible_ssh_user=vagrant ansible_ssh_priv
 [k8s_haproxy]
 loadbalancer1 ansible_ssh_host=172.16.16.51  ansible_ssh_user=vagrant ansible_ssh_private_key_file=/home/amit/.ssh/id_rsa
 loadbalancer2 ansible_ssh_host=172.16.16.52  ansible_ssh_user=vagrant ansible_ssh_private_key_file=/home/amit/.ssh/id_rsa
+[k8s-workers]
+worker1 ansible_ssh_host=172.16.16.201 ansible_ssh_user=vagrant ansible_ssh_private_key_file=/home/amit/.ssh/id_rsa
+worker1 ansible_ssh_host=172.16.16.202 ansible_ssh_user=vagrant ansible_ssh_private_key_file=/home/amit/.ssh/id_rsa

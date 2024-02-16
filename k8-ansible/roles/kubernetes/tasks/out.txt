@@ -5,5 +5,5 @@
       create: yes
       block: |
         {% for item in ansible_play_batch %}
-        {{ hostvars[item].ansible_ssh_host }}   {{ item }}    
+        {{ hostvars[item].ansible_ssh_host }}   {{ item }}.cloudnativeapps.in  {{ item }}    
         {% endfor %}

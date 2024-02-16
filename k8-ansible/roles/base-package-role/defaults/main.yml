@@ -1,0 +1,19 @@
+---
+# defaults file for base-package-role
+kubernetes_packages:
+  - name: kubelet
+    state: present
+  - name: kubectl
+    state: present
+  - name: kubeadm
+    state: present
+  - name: kubernetes-cni
+    state: present
+
+
+containerd_package: containerd.io
+docker_yum_gpg_key: https://download.docker.com/linux/centos/gpg
+containerd_service_state: started
+containerd_service_enabled: true
+
+kubernetes_version_kubeadm: 'v1.29.1'
