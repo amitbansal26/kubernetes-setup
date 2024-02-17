@@ -51,7 +51,7 @@
       include_role:
         name: base-install
 
-- hosts: k8s-master
+- hosts: k8s-master[0]
   name: Setting up kubernetes master node
   tasks:
     - name: Running kubernete Role
@@ -78,3 +78,9 @@
     - name: Running calico network
       include_role:
         name: calico
+- hosts: all
+  name: Detach Subscription Manager
+  tasks:
+    - name: Subscription Manager Detach
+      include_role:
+        name: detach-subscription

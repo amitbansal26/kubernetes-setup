@@ -1,5 +1,4 @@
 ---
-
 - name: Credentials Redhat
   include_vars: ../../kubernetes/vars/vault.yml
 
