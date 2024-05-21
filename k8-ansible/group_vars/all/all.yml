@@ -11,6 +11,8 @@ kubernetes_packages:
 kubernetes_version: '1.29'
 kubernetes_version_rhel_package: '1.29.1'
 
+image_path: /home/amit/images
+
 kubernetes_pod_network:
   # Calico CNI.
   cni: 'calico'

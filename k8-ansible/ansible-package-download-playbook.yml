@@ -1,0 +1,7 @@
+---
+- hosts: dm
+  become: true
+  tasks:
+    - name: offline packages download
+      include_role:
+        name: pkg-download 

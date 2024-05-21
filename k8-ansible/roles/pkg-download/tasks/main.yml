@@ -1,0 +1,135 @@
+---
+- name: "Install yum utils"
+  ansible.builtin.yum:
+    name: yum-utils
+    state: present
+
+- name: "Add Kubernetes Repository"
+  ansible.builtin.yum_repository:
+    name: Kubernetes
+    description: Repository for kubernetes java_packages
+    baseurl:
+      - https://pkgs.k8s.io/core:/stable:/v1.29/rpm/
+    enabled: yes
+    gpgcheck: yes
+    gpgkey: https://pkgs.k8s.io/core:/stable:/v1.29/rpm/repodata/repomd.xml.key
+  #  exclude: kubelet kubeadm kubectl cri-tools kubernetes-cni
+
+- name: "Add Docker Repository"
+  ansible.builtin.get_url:
+    url: https://download.docker.com/linux/centos/docker-ce.repo
+    dest: /etc/yum.repos.d/docer-ce.repo
+  become: true
+#kubelet kubectl kubeadm kubernetes-cni cri-tools
+- name: "Download all the packages"
+  yum:
+    name:
+      - kubelet
+      - kubectl
+      - kubeadm
+      - kubernetes-cni
+      - cri-tools
+      - containerd
+    download_only: true
+    download_dir: "/home/amit/packages"
+    
+- name: "Find Containerd RPM " 
+  find:
+    paths:
+      - "/home/amit/packages"
+    patterns: 
+      - "containerd*.rpm"
+      - "cri-tools*.rpm"
+  register: rpm_files
+
+- name: "Create List in case of multiple packaages"
+  set_fact:
+    package_list: "{{rpm_files.files | map(attribute='path') | list}}"
+
+- name: Install containerd rpm from a local file
+  ansible.builtin.yum:
+    name: "{{package_list}}"
+    state: present
+  become: true
+
+- name: "Set Kubernetes api version"
+  set_fact:
+    api_server_version: "v1.29.5"
+
+- name: "Set Kubernetes controller version"
+  set_fact:
+    controller_version: "v1.29.5" 
+
+- name: "Set Kubernetes scheduler version"
+  set_fact:
+    scheduler_version: "v1.29.5"
+
+- name: "Set Kubernetes proxy version"
+  set_fact:
+    proxy_version: "v1.29.5"
+
+- name: "Set Kubernetes pause image version"
+  set_fact:
+    pause_version: "3.9"
+
+- name: "Set Kubernetes ETCD version"
+  set_fact:
+    etcd_version: "3.5.12-0"
+
+- name: "Set Kubernetes COREDNS version"
+  set_fact:
+    coredns_version: "v1.11.1"
+
+- name: "Set Kubernetes CALICO version"
+  set_fact:
+    calico_version: "v3.27.0"
+
+- name: "Set fact for docker image list"
+  set_fact:
+    full_images_list:
+      - 'registry.k8s.io/kube-apiserver:{{ api_server_version }}'
+      - 'registry.k8s.io/kube-controller-manager:{{ controller_version }}'
+      - 'registry.k8s.io/kube-scheduler:{{ scheduler_version }}'
+      - 'registry.k8s.io/kube-proxy:{{ proxy_version }}'
+      - 'registry.k8s.io/pause:{{ pause_version }}'                  
+      - 'registry.k8s.io/etcd:{{ etcd_version }}'
+      - 'registry.k8s.io/coredns/coredns:{{ coredns_version }}'
+      - 'quay.io/calico/cni:{{ calico_version }}'
+      - 'quay.io/calico/pod2daemon-flexvol:{{ calico_version }}'
+      - 'quay.io/calico/node:{{ calico_version }}'
+      - 'quay.io/calico/kube-controllers:{{ calico_version }}'
+
+- name: "Set fact for short image name"
+  set_fact:
+    short_images_list:
+      - 'kube-apiserver.tar registry.k8s.io/kube-apiserver:{{ api_server_version }}'
+      - 'kube-controller-manager.tar registry.k8s.io/kube-controller-manager:{{ controller_version }}'
+      - 'kube-scheduler.tar registry.k8s.io/kube-scheduler:{{ scheduler_version }}'
+      - 'kube-proxy.tar registry.k8s.io/kube-proxy:{{ proxy_version }}'
+      - 'pause.tar registry.k8s.io/pause:{{ pause_version }}'                  
+      - 'etcd.tar registry.k8s.io/etcd:{{ etcd_version }}'
+      - 'coredns.tar registry.k8s.io/coredns/coredns:{{ coredns_version }}'
+      - 'calico-cni.tar quay.io/calico/cni:{{ calico_version }}'
+      - 'calico-pod2daemon-flexvol.tar quay.io/calico/pod2daemon-flexvol:{{ calico_version }}'
+      - 'calico-node.tar quay.io/calico/node:{{ calico_version }}'
+      - 'calico-kube-controllers.tar quay.io/calico/kube-controllers:{{ calico_version }}'
+- name: "Download all the images"
+  command:
+    ctr image pull "{{ item }}"
+  loop: "{{ full_images_list }}"
+  become: true
+
+- name: Creates directory for image tars
+  ansible.builtin.file:
+    path: "{{ image_path }}"
+    state: directory
+    owner: vagrant
+    group: vagrant
+    mode: 0755
+
+- name: Tar all the images
+  command:
+    ctr image export "{{ image_path }}"/"{{ item.name }}" "{{ item.fimage }}:{{ item.tag }}"
+  become: true
+  with_items:
+    - { name: kube-apiserver.tar, fimage: registry.k8s.io/kube-apiserver, tag: '{{ api_server_version }}' }
