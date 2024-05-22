@@ -24,4 +24,11 @@
   tasks:
     - name: Transfer Artifacts
       include_role:
-        name: unzip-artifacts 
+        name: unzip-artifacts
+
+- hosts: dm
+  name: Base Packages install
+  tasks:
+    - name: Base Packages install 
+      include_role:
+        name: base-install-offline         

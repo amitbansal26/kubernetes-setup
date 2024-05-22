@@ -1,2 +1,101 @@
 ---
-# tasks file for base-install-offline
+- name: "Set Kubernetes api version"
+  set_fact:
+    api_server_version: "v1.29.5"
+
+- name: "Set Kubernetes controller version"
+  set_fact:
+    controller_version: "v1.29.5" 
+
+- name: "Set Kubernetes scheduler version"
+  set_fact:
+    scheduler_version: "v1.29.5"
+
+- name: "Set Kubernetes proxy version"
+  set_fact:
+    proxy_version: "v1.29.5"
+
+- name: "Set Kubernetes pause image version"
+  set_fact:
+    pause_version: "3.9"
+
+- name: "Set Kubernetes Etcd version"
+  set_fact:
+    etcd_version: "3.5.12-0"
+
+- name: "Set Kubernetes Coredns version"
+  set_fact:
+    coredns_version: "v1.11.1"
+
+- name: "Set Kubernetes Calico version"
+  set_fact:
+    calico_version: "v3.27.0"
+
+- name: find all the rpms of kubernetes packages 
+  find:
+    paths: "{{ basedir }}/packages"
+    patterns: "*.rpm"
+  register: rpm_files
+
+- set_fact:
+    rpm_list: "{{ rpm_files.files | map(attribute='path') | list}}"
+
+- name: install rpm files using rpm_list
+  yum:
+    name: "{{ rpm_list }}"
+    state: present
+  become: true
+  register: installdone
+
+- name: containerd enabled
+  become: true
+  service:
+    name: containerd
+    state: "{{ containerd_service_state }}"
+    enabled: "{{ containerd_service_enabled }}"     
+  when: installdone is succeeded
+
+- name: Setup containerd
+  become: true
+  shell: |
+    pause_image=kubeadm config images list | grep pause:
+
+    containerd config default | sudo tee /etc/containerd/config.toml >/dev/null 2>&1
+    sed -i 's/SystemdCgroup \= false/SystemdCgroup \= true/g' /etc/containerd/config.toml
+    sed -i "s/pause:3.6/pause:3.9/g" /etc/containerd/config.toml
+    systemctl restart containerd
+    systemctl enable containerd
+    systemctl status containerd
+
+- name: Swapoff and Selinux off
+  become: true
+  shell: |
+    swapoff -a
+    sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab
+    setenforce 0
+    sed -i --follow-symlinks 's/SELINUX=enforcing/SELINUX=permissive/g' /etc/sysconfig/selinux
+
+- name: Import all the images from tar file
+  command:
+    ctr -n=k8s.io images import "{{basedir}}/images/{{ item.name }}"
+  become: true
+  with_items:
+    - { name: kube-apiserver.tar, fimage: registry.k8s.io/kube-apiserver, tag: '{{ api_server_version }}' }
+    - { name: kube-controller-manager.tar, fimage: registry.k8s.io/kube-controller-manager, tag: '{{ controller_version }}' }
+    - { name: kube-scheduler.tar, fimage: registry.k8s.io/kube-scheduler, tag: '{{ scheduler_version }}' }
+    - { name: kube-proxy.tar, fimage: registry.k8s.io/kube-proxy, tag: '{{ proxy_version }}' }
+    - { name: pause.tar, fimage: registry.k8s.io/pause, tag: '{{ pause_version }}' }
+    - { name: etcd.tar, fimage: registry.k8s.io/etcd, tag: '{{ etcd_version }}' }
+    - { name: coredns.tar, fimage: registry.k8s.io/coredns/coredns, tag: '{{ coredns_version }}' }
+    - { name: calico-cni.tar, fimage: quay.io/calico/cni, tag: '{{ calico_version }}' }
+    - { name: calico-pod2daemon-flexvol.tar, fimage: quay.io/calico/pod2daemon-flexvol, tag: '{{ calico_version }}' }
+    - { name: calico-kube-controllers.tar, fimage: quay.io/calico/kube-controllers, tag: '{{ calico_version }}' }
+    - { name: calico-node.tar, fimage: quay.io/calico/node, tag: '{{ calico_version }}' }
+    - { name: calico-csi.tar, fimage: quay.io/calico/csi, tag: '{{ calico_version }}' }
+    - { name: calico-node-driver-registrar.tar, fimage: quay.io/calico/node-driver-registrar, tag: '{{ calico_version }}' }
+    - { name: calico-typha.tar, fimage: quay.io/calico/typha, tag: '{{ calico_version }}' }
+
+- name: Enable kubelet
+  become: true
+  shell: |
+     systemctl enable --now kubelet
