@@ -1,0 +1,26 @@
+---
+- name: Extract RPM TAR GZ
+  ansible.builtin.unarchive:
+    src: "/home/amit/allpackages.tgz"
+    dest: "/home/amit"
+    remote_src: yes
+  become: true  
+
+- name: Extract Images TAR GZ
+  ansible.builtin.unarchive:
+    src: "/home/amit/allimages.tgz"
+    dest: "/home/amit"
+    remote_src: yes
+  become: true
+
+- name: Delete original files
+  ansible.builtin.file:
+     path: "{{basedir}}/allpackages.tgz"
+     state: absent
+  become: true
+
+- name: Delete original files
+  ansible.builtin.file:
+     path: "{{basedir}}/allimages.tgz"
+     state: absent
+  become: true

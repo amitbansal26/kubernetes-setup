@@ -42,3 +42,5 @@ containerd_service_enabled: true
 
 kubernetes_version_kubeadm: 'v1.29.1'
 procps_package: procps-ng
+
+basedir: /home/amit

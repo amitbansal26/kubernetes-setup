@@ -3,23 +3,25 @@
   tasks:
     - fetch:
         src: "/home/amit/packages/allpackages.tgz"
-        dest: "/home/amit/packages/allpackages.tgz"
+        dest: "/home/amit/allpackages.tgz"
+        flat: true
         run_once: yes
     - fetch:
         src: "/home/amit/images/allimages.tgz"
-        dest: "/home/amit/images/allimages.tgz"
+        dest: "/home/amit/allimages.tgz"
+        flat: true
         run_once: yes
 
 - hosts: k8s-master, k8s-worker
+  name: Transfer images and packages to remote machines
   tasks:
-    - copy:
-        src: "/home/amit/packages/allpackages.tgz"
-        dest: "/home/amit/packages/allpackages.tgz"
-      become: true
+    - name: Transfer Artifacts
+      include_role:
+        name: pkg-xfer-remote
 
 - hosts: k8s-master, k8s-worker
+  name: unzip images and artifacts
   tasks:
-    - copy:
-        src: "/home/amit/images/allimages.tgz"
-        dest: "/home/amit/images/allimages.tgz"
-      become: true
+    - name: Transfer Artifacts
+      include_role:
+        name: unzip-artifacts 
