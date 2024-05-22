@@ -1,2 +1,8 @@
 ---
-# defaults file for pkg-copy
+src_rpm_path: /home/amit/packages
+dest_rpm_path: /home/amit/packages
+
+src_tar_path: /home/amit/images
+dest_tar_path: /home/amit/images
+
+file_owner: vagrant

@@ -1,16 +1,2 @@
 ---
-- name: Copy image tar gz
-  ansible.builtin.copy:
-    src: "{{ src_tar_path }}"
-    dest: "{{ dest_tar_path }}"
-    owner: amit
-    group: amit
-    mode: '0755'
 
-- name: Copy rpm tar gz
-  ansible.builtin.copy:
-    src: "{{ src_rpm_path }}"
-    dest: "{{ dest_rpm_path }}"
-    owner: amit
-    group: amit
-    mode: '0755'    

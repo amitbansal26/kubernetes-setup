@@ -30,9 +30,11 @@
       - kubernetes-cni
       - cri-tools
       - containerd
+      - haproxy
+      - keepalived
     download_only: true
     download_dir: "/home/amit/packages"
-    
+
 - name: "Find Containerd RPM " 
   find:
     paths:
@@ -77,15 +79,15 @@
   set_fact:
     pause_version: "3.9"
 
-- name: "Set Kubernetes ETCD version"
+- name: "Set Kubernetes Etcd version"
   set_fact:
     etcd_version: "3.5.12-0"
 
-- name: "Set Kubernetes COREDNS version"
+- name: "Set Kubernetes Coredns version"
   set_fact:
     coredns_version: "v1.11.1"
 
-- name: "Set Kubernetes CALICO version"
+- name: "Set Kubernetes Calico version"
   set_fact:
     calico_version: "v3.27.0"
 
@@ -102,22 +104,11 @@
       - 'quay.io/calico/cni:{{ calico_version }}'
       - 'quay.io/calico/pod2daemon-flexvol:{{ calico_version }}'
       - 'quay.io/calico/node:{{ calico_version }}'
+      - 'quay.io/calico/node-driver-registrar:{{ calico_version }}'
+      - 'quay.io/calico/typha:{{ calico_version }}'
+      - 'quay.io/calico/csi:{{ calico_version }}'
       - 'quay.io/calico/kube-controllers:{{ calico_version }}'
 
-- name: "Set fact for short image name"
-  set_fact:
-    short_images_list:
-      - 'kube-apiserver.tar registry.k8s.io/kube-apiserver:{{ api_server_version }}'
-      - 'kube-controller-manager.tar registry.k8s.io/kube-controller-manager:{{ controller_version }}'
-      - 'kube-scheduler.tar registry.k8s.io/kube-scheduler:{{ scheduler_version }}'
-      - 'kube-proxy.tar registry.k8s.io/kube-proxy:{{ proxy_version }}'
-      - 'pause.tar registry.k8s.io/pause:{{ pause_version }}'                  
-      - 'etcd.tar registry.k8s.io/etcd:{{ etcd_version }}'
-      - 'coredns.tar registry.k8s.io/coredns/coredns:{{ coredns_version }}'
-      - 'calico-cni.tar quay.io/calico/cni:{{ calico_version }}'
-      - 'calico-pod2daemon-flexvol.tar quay.io/calico/pod2daemon-flexvol:{{ calico_version }}'
-      - 'calico-node.tar quay.io/calico/node:{{ calico_version }}'
-      - 'calico-kube-controllers.tar quay.io/calico/kube-controllers:{{ calico_version }}'
 - name: "Download all the images"
   command:
     ctr image pull "{{ item }}"
@@ -147,6 +138,10 @@
     - { name: calico-cni.tar, fimage: quay.io/calico/cni, tag: '{{ calico_version }}' }
     - { name: calico-pod2daemon-flexvol.tar, fimage: quay.io/calico/pod2daemon-flexvol, tag: '{{ calico_version }}' }
     - { name: calico-kube-controllers.tar, fimage: quay.io/calico/kube-controllers, tag: '{{ calico_version }}' }
+    - { name: calico-node.tar, fimage: quay.io/calico/node, tag: '{{ calico_version }}' }
+    - { name: calico-csi.tar, fimage: quay.io/calico/csi, tag: '{{ calico_version }}' }
+    - { name: calico-node-driver-registrar.tar, fimage: quay.io/calico/node-driver-registrar, tag: '{{ calico_version }}' }
+    - { name: calico-typha.tar, fimage: quay.io/calico/typha, tag: '{{ calico_version }}' }
 
 - name: Compress all image tars
   archive:

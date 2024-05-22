@@ -1,0 +1,25 @@
+---
+- hosts: dm
+  tasks:
+    - fetch:
+        src: "/home/amit/packages/allpackages.tgz"
+        dest: "/home/amit/packages/allpackages.tgz"
+        run_once: yes
+    - fetch:
+        src: "/home/amit/images/allimages.tgz"
+        dest: "/home/amit/images/allimages.tgz"
+        run_once: yes
+
+- hosts: k8s-master, k8s-worker
+  tasks:
+    - copy:
+        src: "/home/amit/packages/allpackages.tgz"
+        dest: "/home/amit/packages/allpackages.tgz"
+      become: true
+
+- hosts: k8s-master, k8s-worker
+  tasks:
+    - copy:
+        src: "/home/amit/images/allimages.tgz"
+        dest: "/home/amit/images/allimages.tgz"
+      become: true
