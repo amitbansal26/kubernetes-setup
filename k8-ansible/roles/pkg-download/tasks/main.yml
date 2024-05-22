@@ -52,6 +52,11 @@
     state: present
   become: true
 
+- name: Start containerd
+  ansible.builtin.systemd_service:
+    state: started
+    name: containerd
+
 - name: "Set Kubernetes api version"
   set_fact:
     api_server_version: "v1.29.5"
@@ -133,3 +138,23 @@
   become: true
   with_items:
     - { name: kube-apiserver.tar, fimage: registry.k8s.io/kube-apiserver, tag: '{{ api_server_version }}' }
+    - { name: kube-controller-manager.tar, fimage: registry.k8s.io/kube-controller-manager, tag: '{{ controller_version }}' }
+    - { name: kube-scheduler.tar, fimage: registry.k8s.io/kube-scheduler, tag: '{{ scheduler_version }}' }
+    - { name: kube-proxy.tar, fimage: registry.k8s.io/kube-proxy, tag: '{{ proxy_version }}' }
+    - { name: pause.tar, fimage: registry.k8s.io/pause, tag: '{{ pause_version }}' }
+    - { name: etcd.tar, fimage: registry.k8s.io/etcd, tag: '{{ etcd_version }}' }
+    - { name: coredns.tar, fimage: registry.k8s.io/coredns/coredns, tag: '{{ coredns_version }}' }
+    - { name: calico-cni.tar, fimage: quay.io/calico/cni, tag: '{{ calico_version }}' }
+    - { name: calico-pod2daemon-flexvol.tar, fimage: quay.io/calico/pod2daemon-flexvol, tag: '{{ calico_version }}' }
+    - { name: calico-kube-controllers.tar, fimage: quay.io/calico/kube-controllers, tag: '{{ calico_version }}' }
+
+- name: Compress all image tars
+  archive:
+    path: "{{ image_path }}"
+    dest: "{{ image_path }}/allimages.tgz"
+
+- name: Compress all packages rpm
+  archive:
+    path: "/home/amit/packages"
+    dest: "/home/amit/packages/allpackages.tgz"    
+#ctr -n=k8s.io images import <filename-from-previous-step>

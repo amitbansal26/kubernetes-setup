@@ -38,17 +38,17 @@ ctr image pull docker.io/calico/pod2daemon-flexvol:$CALICO
 ctr image pull docker.io/calico/node:$CALICO
 ctr image pull docker.io/calico/kube-controllers:$CALICO
 
-ctr image export kube-apiserver.tar k8s.gcr.io/kube-apiserver:$API_SERVER
-ctr image export kube-controller-manager.tar k8s.gcr.io/kube-controller-manager:$CONTROLLER
-ctr image export kube-scheduler.tar k8s.gcr.io/kube-scheduler:$SCHEDULER
-ctr image export kube-proxy.tar k8s.gcr.io/kube-proxy:$PROXY
-ctr image export pause.tar k8s.gcr.io/pause:$PAUSE
-ctr image export etcd.tar k8s.gcr.io/etcd:$ETCD
-ctr image export coredns.tar k8s.gcr.io/coredns/coredns:$COREDNS
-ctr image export calico-cni.tar docker.io/calico/cni:$CALICO
-ctr image export calico-pod2daemon-flexvol.tar docker.io/calico/pod2daemon-flexvol:$CALICO
-ctr image export calico-node.tar docker.io/calico/node:$CALICO
-ctr image export calico-kube-controllers.tar docker.io/calico/kube-controllers:$CALICO
+ctr image export kube-apiserver.tar registry.k8s.io/kube-apiserver:$API_SERVER
+ctr image export kube-controller-manager.tar registry.k8s.io/kube-controller-manager:$CONTROLLER
+ctr image export kube-scheduler.tar registry.k8s.io/kube-scheduler:$SCHEDULER
+ctr image export kube-proxy.tar registry.k8s.io/kube-proxy:$PROXY
+ctr image export pause.tar registry.k8s.io/pause:$PAUSE
+ctr image export etcd.tar registry.k8s.io/etcd:$ETCD
+ctr image export coredns.tar registry.k8s.io/coredns/coredns:$COREDNS
+ctr image export calico-cni.tar quay.io/calico/cni:$CALICO
+ctr image export calico-pod2daemon-flexvol.tar quay.io/calico/pod2daemon-flexvol:$CALICO
+ctr image export calico-node.tar quay.io/calico/node:$CALICO
+ctr image export calico-kube-controllers.tar quay.io/calico/kube-controllers:$CALICO
 
 mkdir $IMAGE_PATH
 mv ./*.tar $IMAGE_PATH
