@@ -1,0 +1,23 @@
+---
+    - file:
+        path: "{{basedir}}/lb"
+        state: absent
+      become: true
+    - file:
+        path: "{{basedir}}/alllb.tgz"
+        state: absent
+      become: true
+       
+    - file:
+        path: "{{basedir}}/lb"
+        state: directory
+      become: true
+                
+    - copy:
+        src: "{{basedir}}/alllb.tgz"
+        dest: "{{basedir}}"
+      become: true
+    - copy:
+        src: "{{basedir}}/alllb.tgz"
+        dest: "{{basedir}}"
+      become: true

@@ -37,3 +37,4 @@
 - name: Join Master replicas to cluster
   become: true
   shell: "{{ kubeadm_join }} --control-plane"
+  

@@ -13,6 +13,21 @@
     remote_src: yes
   become: true
 
+# check if its lb machine and packages exist
+- name: Check if the directory exists
+  stat:
+    path: "{{ basedir }}/lb/alllb.tgz"
+  register: file_data
+
+# Extract if exists loadbalancer
+- name: Extract RPM TAR GZ for loadbalancer
+  ansible.builtin.unarchive:
+    src: "/home/amit/alllb.tgz"
+    dest: "/home/amit"
+    remote_src: yes
+  become: true
+  when: file_data.stat.exists
+
 - name: Delete original files
   ansible.builtin.file:
      path: "{{basedir}}/allpackages.tgz"

@@ -3,6 +3,8 @@
   ansible.builtin.yum:
     name: yum-utils
     state: present
+  become: true
+    
 
 - name: "Add Kubernetes Repository"
   ansible.builtin.yum_repository:
@@ -14,6 +16,7 @@
     gpgcheck: yes
     gpgkey: https://pkgs.k8s.io/core:/stable:/v1.29/rpm/repodata/repomd.xml.key
   #  exclude: kubelet kubeadm kubectl cri-tools kubernetes-cni
+  become: true
 
 - name: "Add Docker Repository"
   ansible.builtin.get_url:
@@ -21,7 +24,7 @@
     dest: /etc/yum.repos.d/docer-ce.repo
   become: true
 #kubelet kubectl kubeadm kubernetes-cni cri-tools
-- name: "Download all the packages"
+- name: "Download kubernetes packages"
   yum:
     name:
       - kubelet
@@ -30,10 +33,23 @@
       - kubernetes-cni
       - cri-tools
       - containerd
-      - haproxy
-      - keepalived
+      - curl
+      - procps-ng
     download_only: true
     download_dir: "/home/amit/packages"
+  become: true
+
+
+- name: "Download lb packages"
+  yum:
+    name:
+      - haproxy
+      - keepalived
+      - curl
+      - procps-ng
+    download_only: true
+    download_dir: "/home/amit/lb"
+  become: true
 
 - name: "Find Containerd RPM " 
   find:
@@ -58,6 +74,7 @@
   ansible.builtin.systemd_service:
     state: started
     name: containerd
+  become: true
 
 - name: "Set Kubernetes api version"
   set_fact:
@@ -119,9 +136,10 @@
   ansible.builtin.file:
     path: "{{ image_path }}"
     state: directory
-    owner: vagrant
-    group: vagrant
+    owner: root
+    group: root
     mode: 0755
+  become: true
 
 - name: Tar all the images
   command:
@@ -147,9 +165,16 @@
   archive:
     path: "{{ image_path }}"
     dest: "{{ image_path }}/allimages.tgz"
+  become: true
 
-- name: Compress all packages rpm
+- name: Compress all kubernetes packages rpm
   archive:
     path: "/home/amit/packages"
-    dest: "/home/amit/packages/allpackages.tgz"    
-#ctr -n=k8s.io images import <filename-from-previous-step>
+    dest: "/home/amit/packages/allpackages.tgz"
+  become: true
+
+- name: Compress all lb packages rpm
+  archive:
+    path: "/home/amit/lb"
+    dest: "/home/amit/lb/alllb.tgz"
+  become: true

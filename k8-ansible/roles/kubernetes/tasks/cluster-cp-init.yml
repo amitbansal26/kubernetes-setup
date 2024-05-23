@@ -39,8 +39,8 @@
     dest: /home/vagrant/.kube/config
     state: link
     mode: 0644
-    owner: vagrant
-    group: vagrant
+    owner: root
+    group: root
 
 - name: "fetch k8s certificates"
   become: true

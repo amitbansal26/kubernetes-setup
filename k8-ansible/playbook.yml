@@ -23,26 +23,27 @@
       include_role:
         name: attach-subscription
 
-- hosts: k8s-master, k8s-worker
-  name: config ip tables
-  tasks:
-    - name: Config ip tables
-      include_role:
-        name: config-iptables
-
-- hosts: k8s-master, k8s-worker
-  name: disable firewall
-  tasks:
-    - name: Disable Firewall
-      include_role:
-        name: disable-firewall
-
 - hosts: k8s_haproxy
   name: Setting up haproxy keepalived
   tasks:
     - name: Running haproxy Role
       include_role:
         name: haproxy 
+
+- hosts: all
+  name: config ip tables
+  tasks:
+    - name: Config ip tables
+      include_role:
+        name: config-iptables
+
+- hosts: all
+  name: disable firewall
+  tasks:
+    - name: Disable Firewall
+      include_role:
+        name: disable-firewall
+
 
 - hosts: k8s-master, k8s-worker
   name: Setup base kubernetes packages

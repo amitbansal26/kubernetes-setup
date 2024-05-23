@@ -1,5 +1,12 @@
 ---
 - hosts: dm
+  name: Download all the packages
+  tasks:
+    - name: Download Artifacts
+      include_role:
+        name: pkg-download
+
+- hosts: dm
   tasks:
     - fetch:
         src: "/home/amit/packages/allpackages.tgz"
@@ -25,10 +32,4 @@
     - name: Transfer Artifacts
       include_role:
         name: unzip-artifacts
-
-- hosts: dm
-  name: Base Packages install
-  tasks:
-    - name: Base Packages install 
-      include_role:
-        name: base-install-offline         
+     

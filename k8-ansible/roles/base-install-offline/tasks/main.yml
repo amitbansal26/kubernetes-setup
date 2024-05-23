@@ -31,6 +31,11 @@
   set_fact:
     calico_version: "v3.27.0"
 
+- name: Disable subscription manager
+  shell: |
+    sudo sed -i 's/enabled=1/enabled=0/' /etc/yum/pluginconf.d/subscription-manager.conf
+    sudo subscription-manager clean
+  
 - name: find all the rpms of kubernetes packages 
   find:
     paths: "{{ basedir }}/packages"
@@ -44,6 +49,7 @@
   yum:
     name: "{{ rpm_list }}"
     state: present
+    disable_gpg_check: true
   become: true
   register: installdone
 

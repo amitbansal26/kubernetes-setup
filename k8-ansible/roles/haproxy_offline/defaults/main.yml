@@ -1,0 +1,4 @@
+---
+remote_home_path: '/home/vagrant'
+proxy1: '172.16.16.51'
+proxy2: '172.16.16.52'

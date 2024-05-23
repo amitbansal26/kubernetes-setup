@@ -1,0 +1,114 @@
+---
+- hosts: dm
+  name: Download all the packages
+  tasks:
+    - name: Download Artifacts
+      include_role:
+        name: pkg-download
+
+
+- hosts: localhost
+  connection: local
+  gather_facts: no
+  tasks:
+    - name: Delete directory
+      become: true
+      become_user: root
+      file:
+        path: /tmp/kubeadm-ha/
+        state: absent
+
+- hosts: all
+  name: Setting up hosts values
+  tasks:
+    - name: Running Hosts Role
+      include_role:
+        name: update-hosts
+
+- hosts: dm
+  tasks:
+    - fetch:
+        src: "/home/amit/packages/allpackages.tgz"
+        dest: "/home/amit/allpackages.tgz"
+        flat: true
+        run_once: yes
+    - fetch:
+        src: "/home/amit/images/allimages.tgz"
+        dest: "/home/amit/allimages.tgz"
+        flat: true
+        run_once: yes
+    - fetch:
+        src: "/home/amit/lb/alllb.tgz"
+        dest: "/home/amit/alllb.tgz"
+        flat: true
+        run_once: yes        
+
+- hosts: k8s-master, k8s-worker
+  name: Transfer images and packages to remote machines
+  tasks:
+    - name: Transfer Artifacts
+      include_role:
+        name: pkg-xfer-remote
+
+- hosts: k8s_haproxy
+  name: Transfer lb packages
+  tasks:
+    - name: Transfer lb Artifacts
+      include_role:
+        name: lb-pkg-xfer        
+
+- hosts: k8s-master, k8s-worker, k8s_haproxy
+  name: unzip images and artifacts
+  tasks:
+    - name: Transfer Artifacts
+      include_role:
+        name: unzip-artifacts
+
+- hosts: k8s-master, k8s-worker
+  name: config ip tables
+  tasks:
+    - name: Config ip tables
+      include_role:
+        name: config-iptables
+
+- hosts: k8s-master, k8s-worker
+  name: disable firewall
+  tasks:
+    - name: Disable Firewall
+      include_role:
+        name: disable-firewall
+
+- hosts: k8s_haproxy
+  name: Setting up haproxy keepalived
+  tasks:
+    - name: Running haproxy Role
+      include_role:
+        name: haproxy_offline
+        
+- hosts: k8s-master, k8s-worker
+  name: Base Packages install
+  tasks:
+    - name: Base Packages install 
+      include_role:
+        name: base-install-offline
+
+- hosts: k8s-master[0]
+  name: Setting up kubernetes master node
+  tasks:
+    - name: Running kubernete Role
+      include_role:
+        name: kubernetes
+
+- hosts: k8s-master-replicas
+  name: Join Replica node
+  tasks:
+    - name: Running kubernete Role
+      include_role:
+        name: master-replica-role
+
+- hosts: k8s-worker
+  name: Worker join
+  tasks:
+    - name: Running Worker Role
+      include_role:
+        name: worker-join-cluster
