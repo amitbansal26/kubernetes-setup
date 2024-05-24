@@ -1,0 +1,24 @@
+---
+- hosts: k8s_haproxy
+  name: Transfer lb packages
+  tasks:
+    - name: Transfer lb Artifacts
+      include_role:
+        name: lb-pkg-xfer        
+
+- hosts: k8s_haproxy
+  name: unzip images and artifacts
+  tasks:
+    - name: Extract Images TAR GZ
+      ansible.builtin.unarchive:
+        src: "/home/amit/alllb.tgz"
+        dest: "/home/amit"
+        remote_src: yes
+
+  become: true
+- hosts: k8s_haproxy
+  name: Setting up haproxy keepalived
+  tasks:
+    - name: Running haproxy Role
+      include_role:
+        name: haproxy_offline

@@ -30,4 +30,4 @@
     - copy:
         src: "{{basedir}}/allimages.tgz"
         dest: "{{basedir}}"
-      become: true
+      become: true 

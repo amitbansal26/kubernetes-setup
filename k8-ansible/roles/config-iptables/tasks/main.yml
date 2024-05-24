@@ -10,13 +10,14 @@
   modprobe:
     name: overlay
     state: present
-- name: procps-ng installation
-  become: true
-  package: 
-    name: "{{ procps_package }}"
-    state: present
-  when: >
-    ansible_distribution != 'Debian'
+
+#- name: procps-ng installation
+#  become: true
+#  package: 
+#    name: "{{ procps_package }}"
+#    state: present
+#  when: >
+#    ansible_distribution != 'Debian'
 
 - name: iptables bridged traffic
   become: true

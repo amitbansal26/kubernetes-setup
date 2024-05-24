@@ -1,5 +1,5 @@
 ---
-- hosts: k8s-master, k8s-worker
+- hosts: k8s-master, k8s-worker, k8s_haproxy
   name: Delete Repo
   tasks:
     - name: Delete Repo

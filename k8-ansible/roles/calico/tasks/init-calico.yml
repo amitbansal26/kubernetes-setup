@@ -6,8 +6,15 @@
     dest: "{{ calico_config_path }}"
   delegate_to: "{{groups['k8s-master'][0]}}"  
 
+- name: Copy Tigera Operator
+  become: true
+  template:
+    src: "tigera-operator.yml"
+    dest: "{{ tigera_config_path }}"
+  delegate_to: "{{groups['k8s-master'][0]}}" 
+
 - name: Configure Calico networking.
-  command: "kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.27.0/manifests/tigera-operator.yaml"
+  command: "kubectl create -f {{ tigera_config_path }}"
   register: calico_result
   changed_when: "'created' in calico_result.stdout"
   delegate_to: "{{groups['k8s-master'][0]}}"  

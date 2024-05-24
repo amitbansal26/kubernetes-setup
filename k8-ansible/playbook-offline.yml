@@ -17,6 +17,12 @@
       file:
         path: /tmp/kubeadm-ha/
         state: absent
+    
+    - name: Create directory
+      become: true
+      file:
+        path: /tmp/kubeadm-ha
+        state: directory
 
 - hosts: all
   name: Setting up hosts values
@@ -57,12 +63,22 @@
       include_role:
         name: lb-pkg-xfer        
 
-- hosts: k8s-master, k8s-worker, k8s_haproxy
+- hosts: k8s-master, k8s-worker
   name: unzip images and artifacts
   tasks:
     - name: Transfer Artifacts
       include_role:
         name: unzip-artifacts
+
+- hosts: k8s_haproxy
+  name: unzip images and artifacts
+  tasks:
+    - name: Extract Images TAR GZ
+      ansible.builtin.unarchive:
+        src: "{{ basedir }}/alllb.tgz"
+        dest: "{{ basedir }}"
+        remote_src: yes
+      become: true  
 
 - hosts: k8s-master, k8s-worker
   name: config ip tables
@@ -112,3 +128,10 @@
     - name: Running Worker Role
       include_role:
         name: worker-join-cluster
+        
+- hosts: k8s-master[0]
+  name: Setting up calico
+  tasks:
+    - name: Running calico network
+      include_role:
+        name: calico        

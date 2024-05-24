@@ -11,10 +11,10 @@
     name: Kubernetes
     description: Repository for kubernetes java_packages
     baseurl:
-      - https://pkgs.k8s.io/core:/stable:/v1.29/rpm/
+      - "https://pkgs.k8s.io/core:/stable:/v{{ kubernetes_version }}/rpm/"
     enabled: yes
     gpgcheck: yes
-    gpgkey: https://pkgs.k8s.io/core:/stable:/v1.29/rpm/repodata/repomd.xml.key
+    gpgkey: "https://pkgs.k8s.io/core:/stable:/v{{ kubernetes_version }}/rpm/repodata/repomd.xml.key"
   #  exclude: kubelet kubeadm kubectl cri-tools kubernetes-cni
   become: true
 
@@ -78,19 +78,19 @@
 
 - name: "Set Kubernetes api version"
   set_fact:
-    api_server_version: "v1.29.5"
+    api_server_version: "{{ kubernetes_version_kubeadm }}"
 
 - name: "Set Kubernetes controller version"
   set_fact:
-    controller_version: "v1.29.5" 
+    controller_version: "{{ kubernetes_version_kubeadm }}" 
 
 - name: "Set Kubernetes scheduler version"
   set_fact:
-    scheduler_version: "v1.29.5"
+    scheduler_version: "{{ kubernetes_version_kubeadm }}"
 
 - name: "Set Kubernetes proxy version"
   set_fact:
-    proxy_version: "v1.29.5"
+    proxy_version: "{{ kubernetes_version_kubeadm }}"
 
 - name: "Set Kubernetes pause image version"
   set_fact:
