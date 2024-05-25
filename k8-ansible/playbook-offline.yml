@@ -1,4 +1,13 @@
 ---
+- hosts: k8s-master, k8s-worker, k8s_haproxy
+  name: Delete Repo
+  tasks:
+    - name: Delete Repo
+      file:
+        path: /etc/yum.repos.d/
+        state: absent
+      become: true
+
 - hosts: dm
   name: Download all the packages
   tasks:
