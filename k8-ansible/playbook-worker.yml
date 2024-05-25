@@ -4,4 +4,4 @@
   tasks:
     - name: Running Worker Role
       include_role:
-        name: worker-join-cluster  
+        name: worker-join-cluster

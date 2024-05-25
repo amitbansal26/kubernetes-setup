@@ -6,7 +6,6 @@
       include_role:
         name: pkg-download
 
-
 - hosts: localhost
   connection: local
   gather_facts: no
@@ -61,7 +60,7 @@
   tasks:
     - name: Transfer lb Artifacts
       include_role:
-        name: lb-pkg-xfer        
+        name: lb-pkg-xfer
 
 - hosts: k8s-master, k8s-worker
   name: unzip images and artifacts
@@ -134,4 +133,4 @@
   tasks:
     - name: Running calico network
       include_role:
-        name: calico        
+        name: calico-offline

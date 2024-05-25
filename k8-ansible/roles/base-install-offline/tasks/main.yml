@@ -17,19 +17,19 @@
 
 - name: "Set Kubernetes pause image version"
   set_fact:
-    pause_version: "3.9"
+    pause_version: "{{ pause_version }}"
 
 - name: "Set Kubernetes Etcd version"
   set_fact:
-    etcd_version: "3.5.12-0"
+    etcd_version: "{{ etcd_version }}"
 
 - name: "Set Kubernetes Coredns version"
   set_fact:
-    coredns_version: "v1.11.1"
+    coredns_version: "{{ coredns_version }}"
 
 - name: "Set Kubernetes Calico version"
   set_fact:
-    calico_version: "v3.27.0"
+    calico_version: "{{ calico_version }}"
 
 - name: Disable subscription manager
   shell: |
