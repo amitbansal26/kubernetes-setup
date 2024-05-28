@@ -126,6 +126,8 @@
       - 'quay.io/calico/typha:{{ calico_version }}'
       - 'quay.io/calico/csi:{{ calico_version }}'
       - 'quay.io/calico/kube-controllers:{{ calico_version }}'
+      - 'quay.io/calico/apiserver:{{calico_version}}'
+      -  'quay.io/tigera/operator:{{tigera_operator_version}}'
 
 - name: "Download all the images"
   command:
@@ -161,6 +163,8 @@
     - { name: calico-csi.tar, fimage: quay.io/calico/csi, tag: '{{ calico_version }}' }
     - { name: calico-node-driver-registrar.tar, fimage: quay.io/calico/node-driver-registrar, tag: '{{ calico_version }}' }
     - { name: calico-typha.tar, fimage: quay.io/calico/typha, tag: '{{ calico_version }}' }
+    - { name: calico-apiserver.tar, fimage: quay.io/calico/apiserver, tag: '{{ calico_version }}' }
+    - { name: tigera-operator.tar, fimage: quay.io/tigera/operator, tag: '{{ tigera_operator_version }}' }
 
 - name: Compress all image tars
   archive:
