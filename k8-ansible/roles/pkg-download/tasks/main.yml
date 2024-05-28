@@ -32,7 +32,8 @@
       - kubeadm
       - kubernetes-cni
       - cri-tools
-      - containerd
+      - containerd.io
+      - container-selinux
       - curl
       - procps-ng
     download_only: true

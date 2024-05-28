@@ -18,6 +18,7 @@
     - file:
         path: "{{basedir}}/packages"
         state: directory
+        mode: '0777'
       become: true
     - file:
         path: "{{basedir}}/images"

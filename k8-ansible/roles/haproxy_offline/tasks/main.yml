@@ -3,6 +3,7 @@
   find:
     paths: "{{ basedir }}/lb"
     patterns: "*.rpm"
+  become: true
   register: rpm_files
 
 - set_fact:

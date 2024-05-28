@@ -1,0 +1,74 @@
+---
+# tasks file for base-uninstall
+
+- name: Ensure dependencies are Removed.
+  become: true
+  command: kubeadm reset -f
+
+- name: Ensure folders are Removed.
+  become: true
+  command: rm -rf /etc/cni /etc/kubernetes /var/lib/dockershim /var/lib/etcd /var/lib/kubelet /var/run/kubernetes ~/.kube/*
+
+- name: Remove Kube Config
+  become: true
+  command: sudo rm -rf ~/.kube
+
+- name: Flush iptables
+  become: true
+  command: iptables -F
+
+- name: Flush iptables
+  become: true
+  command: iptables -t nat -F 
+
+- name: Flush iptables
+  become: true
+  command: iptables -t raw -F
+
+- name: Flush iptables
+  become: true
+  command: iptables -t mangle -F 
+
+- name: Flush iptables
+  become: true
+  command: iptables -t nat -F 
+
+- name: Stop kubelet
+  become: true
+  command: systemctl stop kubelet
+
+- name: Disable kubelet
+  become: true
+  command: systemctl stop kubelet
+  
+- name: Stop containerd
+  become: true
+  command: systemctl stop containerd
+
+- name: Disable containerd
+  become: true
+  command: systemctl disable containerd
+
+- name: Ensure container-selinux is installed.
+  become: true
+  package:
+    name: containerd.io
+    state: absent
+
+- name: Ensure container-selinux is installed.
+  become: true
+  package:
+    name: container-selinux
+    state: absent
+
+- name: Remove Kubernetes packages.
+  become: true
+  package:
+    name: "{{ item.name | default(item) }}"
+    state: "absent"
+  with_items: "{{ kubernetes_packages }}"
+
+- name: Ensure folders are Removed.
+  become: true
+  command: rm -rf /var/lib/containerd
+

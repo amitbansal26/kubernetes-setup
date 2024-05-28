@@ -1,7 +1,7 @@
 ---
-- hosts: k8s-master
+- hosts: k8s-master, k8s-worker
   name: Reset
   tasks:
-    - name: Running calico network
+    - name: Wipe off kubernetes
       include_role:
-        name: kubernetes-reset
+        name: base-uninstall
