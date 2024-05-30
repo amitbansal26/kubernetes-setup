@@ -49,3 +49,6 @@ etcd_version: '3.5.12-0'
 pause_version: '3.9'
 coredns_version: 'v1.11.1'
 calico_version: 'v3.27.0'
+
+nexus_ip: '172.16.16.122'
+containerd_hosts_path: "/etc/containerd/certs.d/{{ nexus_ip }}/hosts.toml"
