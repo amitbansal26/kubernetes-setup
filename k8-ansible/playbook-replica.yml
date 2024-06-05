@@ -1,0 +1,6 @@
+- hosts: k8s-master-replicas
+  name: Join Replica node
+  tasks:
+    - name: Running kubernete Role
+      include_role:
+        name: master-replica-role

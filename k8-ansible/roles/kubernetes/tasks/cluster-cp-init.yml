@@ -36,7 +36,7 @@
   become: true
   file:
     src: /etc/kubernetes/admin.conf
-    dest: /home/vagrant/.kube/config
+    dest: /root/.kube/config
     state: link
     mode: 0644
     owner: root

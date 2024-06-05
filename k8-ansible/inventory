@@ -1,22 +1,21 @@
 [k8s-master]
-master1 ansible_ssh_host=172.16.16.101 ansible_ssh_user=vagrant ansible_ssh_private_key_file=/home/amit/.ssh/id_rsa
-master2 ansible_ssh_host=172.16.16.102 ansible_ssh_user=vagrant ansible_ssh_private_key_file=/home/amit/.ssh/id_rsa
-master3 ansible_ssh_host=172.16.16.103 ansible_ssh_user=vagrant ansible_ssh_private_key_file=/home/amit/.ssh/id_rsa
+master1 ansible_ssh_host=172.16.16.101 
+master2 ansible_ssh_host=172.16.16.102 
+master3 ansible_ssh_host=172.16.16.103 
 [k8s-master-primary]
-master1 ansible_ssh_host=172.16.16.101 ansible_ssh_user=vagrant ansible_ssh_private_key_file=/home/amit/.ssh/id_rsa
+master1 ansible_ssh_host=172.16.16.101 
 [k8s-master-replicas]
-master2 ansible_ssh_host=172.16.16.102 ansible_ssh_user=vagrant ansible_ssh_private_key_file=/home/amit/.ssh/id_rsa
-master3 ansible_ssh_host=172.16.16.103 ansible_ssh_user=vagrant ansible_ssh_private_key_file=/home/amit/.ssh/id_rsa
+master2 ansible_ssh_host=172.16.16.102 
+master3 ansible_ssh_host=172.16.16.103 
 [k8s_haproxy]
-loadbalancer1 ansible_ssh_host=172.16.16.51  ansible_ssh_user=vagrant ansible_ssh_private_key_file=/home/amit/.ssh/id_rsa
-loadbalancer2 ansible_ssh_host=172.16.16.52  ansible_ssh_user=vagrant ansible_ssh_private_key_file=/home/amit/.ssh/id_rsa
+loadbalancer1 ansible_ssh_host=172.16.16.51  
+loadbalancer2 ansible_ssh_host=172.16.16.52  
 [k8s-worker]
-worker1 ansible_ssh_host=172.16.16.201  ansible_ssh_user=vagrant ansible_ssh_private_key_file=/home/amit/.ssh/id_rsa
-worker2 ansible_ssh_host=172.16.16.202 ansible_ssh_user=vagrant ansible_ssh_private_key_file=/home/amit/.ssh/id_rsa
+worker1 ansible_ssh_host=172.16.16.201  
+#worker2 ansible_ssh_host=172.16.16.202 
 #[nexus]
-#nexus ansible_ssh_host=172.16.16.203 ansible_ssh_user=vagrant ansible_ssh_private_key_file=/home/amit/.ssh/id_rsa
-[dm]
-dm ansible_ssh_host=172.16.16.212 ansible_ssh_user=vagrant ansible_ssh_private_key_file=/home/amit/.ssh/id_rsa
-
-[nexus]
-nexus ansible_ssh_host=172.16.16.213 ansible_ssh_user=vagrant ansible_ssh_private_key_file=/home/amit/.ssh/id_rsa
+#nexus ansible_ssh_host=172.16.16.203 
+#[dm]
+#dm ansible_ssh_host=172.16.16.212 
+#[nexus]
+#nexus ansible_ssh_host=172.16.16.213
