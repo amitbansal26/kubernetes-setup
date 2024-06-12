@@ -1,0 +1,6 @@
+---
+nexus_url_baseurl: "http://localhost:8081"
+docker_registry_hosted_name: "amithosted"
+nexus_admin_password: "changeme"
+nexus_admin_user: "admin"
+nexus_default_storage_name: "default"

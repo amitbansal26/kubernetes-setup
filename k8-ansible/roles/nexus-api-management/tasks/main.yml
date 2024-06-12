@@ -1,0 +1,4 @@
+---
+# tasks file for nexus-api-management
+- name: Create Docker repository
+  include_tasks: docker-registry-tasks.yml

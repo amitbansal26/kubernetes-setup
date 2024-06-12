@@ -1,0 +1,54 @@
+---
+- name: Setting fact for docker registry
+  set_fact:
+    docker_registry_baseurl: "{{ nexus_url_baseurl }}/service/rest/v1/repositories/docker"
+
+- name: Debug Variables
+  debug:
+    msg: "{{ docker_registry_baseurl }}"
+
+- name: Check if hosted registry exists
+  uri:
+    url: "{{ docker_registry_baseurl }}/hosted/{{ docker_registry_hosted_name }}"
+    user: "{{ nexus_admin_user }}"
+    password: "{{ nexus_admin_password }}"
+    method: GET
+    force_basic_auth: true
+    status_code: 404
+  failed_when: false
+  register: check_docker_hosted
+
+- name: Debug Variables
+  debug:
+    msg: "{{ check_docker_hosted }}"
+
+- name: Debug Variables for repo creation
+  debug:
+    msg: "{{ docker_registry_baseurl }}/hosted"
+
+- name: Create Docker hosted repository on nexus oss
+  uri:
+    url: "{{ docker_registry_baseurl }}/hosted"
+    user: "{{ nexus_admin_user }}"
+    password: "{{ nexus_admin_password }}"
+    method: POST
+    return_content: true
+    body:
+      name: "{{ docker_registry_hosted_name }}"
+      online: true
+      storage:
+        blobStoreName: "{{ nexus_default_storage_name }}"
+        strictContentTypeValidation: true
+        writePolicy: ALLOW
+      cleanup:
+        policyNames: []
+      component:
+        proprietaryComponents: true
+      docker:
+        v1Enabled: false
+        forceBasicAuth: true
+        httpPort: 5001
+    force_basic_auth: true
+    status_code: "201"
+    body_format: json
+  when: check_docker_hosted.status == 404

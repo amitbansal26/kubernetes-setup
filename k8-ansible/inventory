@@ -17,5 +17,5 @@ worker1 ansible_ssh_host=172.16.16.201
 #nexus ansible_ssh_host=172.16.16.203 
 #[dm]
 #dm ansible_ssh_host=172.16.16.212 
-#[nexus]
-#nexus ansible_ssh_host=172.16.16.213
+[nexus]
+nexus ansible_ssh_host=3.110.98.159 ansible_ssh_common_args='-o StrictHostKeyChecking=no'
