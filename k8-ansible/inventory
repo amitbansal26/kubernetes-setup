@@ -1,5 +1,5 @@
 [k8s-master]
-master1 ansible_ssh_host=172.16.16.101 
+master1 ansible_ssh_host=172.16.16.101
 master2 ansible_ssh_host=172.16.16.102 
 master3 ansible_ssh_host=172.16.16.103 
 [k8s-master-primary]
@@ -15,7 +15,7 @@ worker1 ansible_ssh_host=172.16.16.201
 #worker2 ansible_ssh_host=172.16.16.202 
 #[nexus]
 #nexus ansible_ssh_host=172.16.16.203 
-#[dm]
-#dm ansible_ssh_host=172.16.16.212 
-[nexus]
-nexus ansible_ssh_host=3.110.98.159 ansible_ssh_common_args='-o StrictHostKeyChecking=no'
+[dm]
+dm ansible_ssh_host=172.16.16.212 
+#[nexus]
+#nexus ansible_ssh_host=3.110.98.159 ansible_ssh_common_args='-o StrictHostKeyChecking=no'
