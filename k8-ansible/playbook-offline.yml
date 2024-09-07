@@ -144,3 +144,12 @@
       include_role:
         name: calico-offline
 
+- hosts: k8s-master[0]
+  become: true
+  name: kubeconfig
+  tasks:
+    - name: Specifying a destination path
+      ansible.builtin.fetch:
+        src: /root/.kube/config
+        dest: /home/amit/.kube/
+        flat: yes
