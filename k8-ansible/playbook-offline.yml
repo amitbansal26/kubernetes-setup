@@ -144,28 +144,3 @@
       include_role:
         name: calico-offline
 
-- hosts: all
-  name: Wait
-  tasks:
-    - name: Pause for 5 minutes to let the cluster restart
-      ansible.builtin.pause:
-        minutes: 1
-
-- name: Install longhorn
-  hosts: localhost
-  become: no
-  gather_facts: no
-  tasks:
-    - name: Deploy longhorn
-      ansible.builtin.command: kubectl apply -f https://raw.githubusercontent.com/longhorn/longhorn/v1.7.x/deploy/longhorn.yaml
-      tags:
-        - init
-    - name: Use longhorn as default storage class
-      kubernetes.core.k8s:
-        state: patched
-        kind: StorageClass
-        name: longhorn
-        definition:
-          metadata:
-            annotations:
-              storageclass.kubernetes.io/is-default-class: 'true'
