@@ -1,15 +1,4 @@
 ---
-- name: Credentials Redhat
-  include_vars: ../../kubernetes/vars/vault.yml
-
-- name: Register and Auto attach username
-  become: true
-  community.general.redhat_subscription:
-    state: present
-    username: "{{ rhsm_username }}"
-    password: "{{ rhsm_password }}"
-    auto_attach: true
-
 - name: Install haproxy and keepalived
   become: true
   package:

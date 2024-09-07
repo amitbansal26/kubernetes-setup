@@ -16,12 +16,6 @@
     - name: Running Hosts Role
       include_role:
         name: update-hosts
-- hosts: all
-  name: attach Subscription Manager
-  tasks:
-    - name: Subscription Manager attach
-      include_role:
-        name: attach-subscription
 
 - hosts: k8s_haproxy
   name: Setting up haproxy keepalived
@@ -79,9 +73,3 @@
     - name: Running calico network
       include_role:
         name: calico
-- hosts: all
-  name: Detach Subscription Manager
-  tasks:
-    - name: Subscription Manager Detach
-      include_role:
-        name: detach-subscription

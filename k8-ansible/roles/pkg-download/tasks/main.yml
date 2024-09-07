@@ -36,6 +36,8 @@
       - container-selinux
       - curl
       - procps-ng
+      - iscsi-initiator-utils
+      - nfs-utils
     download_only: true
     download_dir: "/home/amit/packages"
   become: true
@@ -61,7 +63,7 @@
       - "cri-tools*.rpm"
   register: rpm_files
 
-- name: "Create List in case of multiple packaages"
+- name: "Create List in case of multiple packages"
   set_fact:
     package_list: "{{rpm_files.files | map(attribute='path') | list}}"
 
