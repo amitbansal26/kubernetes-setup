@@ -1,0 +1,41 @@
+---
+# tasks file for helm-packages
+# Add prometheus chart repo
+- name: Add kube-prometheus-stack chart repo
+  kubernetes.core.helm_repository:
+    name: prometheus-community
+    repo_url: "https://prometheus-community.github.io/helm-charts"
+
+# Install kube prometheus stack
+- name: Deploy kube-prometheus-stack
+  kubernetes.core.helm:
+    name: kube-prometheus-stack
+    chart_ref: prometheus-community/kube-prometheus-stack
+    chart_version: 62.5.0
+    release_namespace: monitoring
+    values: "{{ lookup('template', 'kube-prometheus-stack.yaml.j2') | from_yaml }}"
+
+# Install open Search cluster with Dashborads
+#helm repo add opensearch-operator https://opensearch-project.github.io/opensearch-k8s-operator/
+
+# Add prometheus chart repo
+- name: Add opensearch operator chart repo
+  kubernetes.core.helm_repository:
+    name: opensearch-operator
+    repo_url: "https://opensearch-project.github.io/opensearch-k8s-operator"
+
+# Install kube opensearch operator
+- name: Deploy opensearch-operator
+  kubernetes.core.helm:
+    name: opensearch-operator
+    chart_ref: opensearch-operator/opensearch-operator
+    chart_version: 3.0.9
+    release_namespace: monitoring
+    values: "{{ lookup('template', 'opensearch-operator.yaml.j2') | from_yaml }}"
+
+# Install opensearch cluster
+
+- name: Apply metrics-server manifest to the cluster.
+  kubernetes.core.k8s:
+    state: present
+    src: ~/metrics-server.yaml

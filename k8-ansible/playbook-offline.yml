@@ -144,6 +144,7 @@
       include_role:
         name: calico-offline
 
+# Install Longhorn
 - hosts: k8s-master[0]
   become: true
   name: kubeconfig
@@ -153,3 +154,5 @@
         src: /root/.kube/config
         dest: /home/amit/.kube/
         flat: yes
+    - name: Deploy longhorn
+      ansible.builtin.command: kubectl apply -f https://raw.githubusercontent.com/longhorn/longhorn/v1.7.x/deploy/longhorn.yaml
