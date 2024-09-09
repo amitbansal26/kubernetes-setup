@@ -1,0 +1,8 @@
+- hosts: localhost
+  connection: local
+  gather_facts: no
+  name: Install helm
+  tasks:
+    - name: Install kubernetes packages
+      include_role:
+        name: helm-packages

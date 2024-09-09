@@ -1,0 +1,8 @@
+#helm list --short | xargs -L1 helm delete
+- hosts: localhost
+  connection: local
+  gather_facts: no
+  name: Removing all the helm packages
+  tasks:
+    - name: Clear all packages
+      ansible.builtin.command: helm list --short | xargs -L1 helm delete

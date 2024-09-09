@@ -6,6 +6,15 @@
     name: prometheus-community
     repo_url: "https://prometheus-community.github.io/helm-charts"
 
+
+- name: Create a k8s namespace
+  kubernetes.core.k8s:
+    name: monitoring
+    api_version: v1
+    kind: Namespace
+    state: present
+
+
 # Install kube prometheus stack
 - name: Deploy kube-prometheus-stack
   kubernetes.core.helm:
@@ -29,13 +38,19 @@
   kubernetes.core.helm:
     name: opensearch-operator
     chart_ref: opensearch-operator/opensearch-operator
-    chart_version: 3.0.9
-    release_namespace: monitoring
-    values: "{{ lookup('template', 'opensearch-operator.yaml.j2') | from_yaml }}"
+    chart_version: 2.6.1
+    release_namespace: default
+
 
 # Install opensearch cluster
 
-- name: Apply metrics-server manifest to the cluster.
+- name: Apply opensearch operator secrets to the cluster
   kubernetes.core.k8s:
     state: present
-    src: ~/metrics-server.yaml
+    template: secrets-config.yaml.j2
+
+# Install opensearch cluster
+- name: Apply opensearch operator manifest to the cluster
+  kubernetes.core.k8s:
+    state: present
+    template: opensearch-cluster.yaml.j2
