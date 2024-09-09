@@ -6,14 +6,12 @@
     name: prometheus-community
     repo_url: "https://prometheus-community.github.io/helm-charts"
 
-
 - name: Create a k8s namespace
   kubernetes.core.k8s:
     name: monitoring
     api_version: v1
     kind: Namespace
     state: present
-
 
 # Install kube prometheus stack
 - name: Deploy kube-prometheus-stack
@@ -27,30 +25,32 @@
 # Install open Search cluster with Dashborads
 #helm repo add opensearch-operator https://opensearch-project.github.io/opensearch-k8s-operator/
 
-# Add prometheus chart repo
-- name: Add opensearch operator chart repo
+- name: Add opensearch chart repo
   kubernetes.core.helm_repository:
-    name: opensearch-operator
-    repo_url: "https://opensearch-project.github.io/opensearch-k8s-operator"
+    name: opensearch
+    repo_url: "https://opensearch-project.github.io/helm-charts/"
 
-# Install kube opensearch operator
-- name: Deploy opensearch-operator
+# Install kube prometheus stack
+- name: Deploy opensearch master
   kubernetes.core.helm:
-    name: opensearch-operator
-    chart_ref: opensearch-operator/opensearch-operator
-    chart_version: 2.6.1
+    name: opensearch-master
+    chart_ref: opensearch/opensearch
+    chart_version: 2.23.2
     release_namespace: default
+    values: "{{ lookup('file', 'master.yaml') | from_yaml }}"
 
+- name: Deploy opensearch data
+  kubernetes.core.helm:
+    name: opensearch-data
+    chart_ref: opensearch/opensearch
+    chart_version: 2.23.2
+    release_namespace: default
+    values: "{{ lookup('file', 'data.yaml') | from_yaml }}"
 
-# Install opensearch cluster
-
-- name: Apply opensearch operator secrets to the cluster
-  kubernetes.core.k8s:
-    state: present
-    template: secrets-config.yaml.j2
-
-# Install opensearch cluster
-- name: Apply opensearch operator manifest to the cluster
-  kubernetes.core.k8s:
-    state: present
-    template: opensearch-cluster.yaml.j2
+- name: Deploy opensearch coordinator
+  kubernetes.core.helm:
+    name: opensearch-coordinator
+    chart_ref: opensearch/opensearch
+    chart_version: 2.23.2
+    release_namespace: default
+    values: "{{ lookup('file', 'client.yaml') | from_yaml }}"

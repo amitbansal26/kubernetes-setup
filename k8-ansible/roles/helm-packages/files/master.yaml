@@ -8,20 +8,20 @@ masterService: "opensearch-cluster-master"
 
 roles:
   - master
-  - ingest
-  - data
-  - remote_cluster_client
 
-replicas: 3
+replicas: 1
 
+# if not set, falls back to parsing .Values.imageTag, then .Chart.appVersion.
 majorVersion: ""
 
 global:
+  # Set if you want to change the default docker registry, e.g. a private one.
   dockerRegistry: ""
 
 # Allows you to add any config files in {{ .Values.opensearchHome }}/config
 opensearchHome: /usr/share/opensearch
 
+# such as opensearch.yml and log4j2.properties
 config:
   # Values must be YAML literal style scalar / YAML multiline string.
   # <filename>: |
@@ -38,63 +38,21 @@ config:
   #   rootLogger.appenderRef.console.ref = console
   opensearch.yml: |
     cluster.name: opensearch-cluster
-
-    # Bind to all interfaces because we don't know what IP address Docker will assign to us.
     network.host: 0.0.0.0
-
-    # Setting network.host to a non-loopback address enables the annoying bootstrap checks. "Single-node" mode disables them again.
-    # Implicitly done if ".singleNode" is set to "true".
-    # discovery.type: single-node
-
-    # Start OpenSearch Security Demo Configuration
-    # WARNING: revise all the lines below before you go into production
     plugins:
       security:
-        ssl:
-          transport:
-            pemcert_filepath: esnode.pem
-            pemkey_filepath: esnode-key.pem
-            pemtrustedcas_filepath: root-ca.pem
-            enforce_hostname_verification: false
-          http:
-            enabled: true
-            pemcert_filepath: esnode.pem
-            pemkey_filepath: esnode-key.pem
-            pemtrustedcas_filepath: root-ca.pem
-        allow_unsafe_democertificates: true
-        allow_default_init_securityindex: true
-        authcz:
-          admin_dn:
-            - CN=kirk,OU=client,O=client,L=test,C=de
-        audit.type: internal_opensearch
-        enable_snapshot_restore_privilege: true
-        check_snapshot_restore_write_privileges: true
-        restapi:
-          roles_enabled: ["all_access", "security_rest_api_access"]
-        system_indices:
-          enabled: true
-          indices:
-            [
-              ".opendistro-alerting-config",
-              ".opendistro-alerting-alert*",
-              ".opendistro-anomaly-results*",
-              ".opendistro-anomaly-detector*",
-              ".opendistro-anomaly-checkpoints",
-              ".opendistro-anomaly-detection-state",
-              ".opendistro-reports-*",
-              ".opendistro-notifications-*",
-              ".opendistro-notebooks",
-              ".opendistro-asynchronous-search-response*",
-            ]
-    ######## End OpenSearch Security Demo Configuration ########
+        disabled: true
   # log4j2.properties:
-
 # Extra environment variables to append to this nodeGroup
 # This will be appended to the current 'env:' key. You can use any of the kubernetes env
 # syntax here
 extraEnvs:
-  - name: OPENSEARCH_INITIAL_ADMIN_PASSWORD
-    value: myStrongPassword@123!
+#  - name: MY_ENVIRONMENT_VAR
+#    value: the_value_goes_here
+# Chart version 2.18.0 and App Version OpenSearch 2.12.0 onwards a custom strong password needs to be provided in order to setup demo admin user.
+# Cluster will not spin-up without this unless demo config install is disabled.
+- name: OPENSEARCH_INITIAL_ADMIN_PASSWORD
+  value: Test@123#~
 
 # Allows you to load environment variables from kubernetes secret or config map
 envFrom: []
@@ -200,7 +158,7 @@ persistence:
   #
   # storageClass: "-"
   accessModes:
-    - ReadWriteOncePod
+    - ReadWriteOnce
   size: 8Gi
   annotations: {}
 
@@ -218,10 +176,28 @@ extraContainers: []
   #   image: busybox
   #   command: ['do', 'something']
 
-extraInitContainers: []
-  # - name: do-somethings
-  #   image: busybox
-  #   command: ['do', 'something']
+extraInitContainers:
+  - name: sysctl
+    image: docker.io/bitnami/bitnami-shell:10-debian-10-r199
+    imagePullPolicy: "IfNotPresent"
+    command:
+      - /bin/bash
+      - -ec
+      - |
+        CURRENT=`sysctl -n vm.max_map_count`;
+        DESIRED="262144";
+        if [ "$DESIRED" -gt "$CURRENT" ]; then
+            sysctl -w vm.max_map_count=262144;
+        fi;
+        CURRENT=`sysctl -n fs.file-max`;
+        DESIRED="65536";
+        if [ "$DESIRED" -gt "$CURRENT" ]; then
+            sysctl -w fs.file-max=65536;
+        fi;
+    securityContext:
+      runAsUser: 0
+      privileged: true
+
 
 # This is the PriorityClass settings as defined in
 # https://kubernetes.io/docs/concepts/configuration/pod-priority-preemption/#priorityclass
@@ -515,3 +491,17 @@ extraObjects: []
   #      selector:
   #        matchLabels:
   #          {{- include "opensearch.selectorLabels" . | nindent 6 }}
+
+# ServiceMonitor Configuration for Prometheus
+# Enabling this option will create a ServiceMonitor resource that allows Prometheus to scrape metrics from the OpenSearch service.
+serviceMonitor:
+  # Set to true to enable the ServiceMonitor resource
+  enabled: false
+
+  # HTTP path where metrics are exposed.
+  # Ensure this matches your OpenSearch service configuration.
+  path: /_prometheus/metrics
+
+  # Frequency at which Prometheus will scrape metrics.
+  # Adjust based on your needs.
+  interval: 10s
