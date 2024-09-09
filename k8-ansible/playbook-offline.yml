@@ -39,21 +39,22 @@
       include_role:
         name: update-hosts
 
+# Download package from DM to Ansible Host
 - hosts: dm
   tasks:
     - fetch:
-        src: "/home/amit/packages/allpackages.tgz"
-        dest: "/home/amit/allpackages.tgz"
+        src: "{{ kubernetes_package_download_dir }}/allpackages.tgz"
+        dest: "{{ ansible_host_download_directory }}/allpackages.tgz"
         flat: true
         run_once: yes
     - fetch:
-        src: "/home/amit/images/allimages.tgz"
-        dest: "/home/amit/allimages.tgz"
+        src: "{{ image_path }}/allimages.tgz"
+        dest: "{{ ansible_host_download_directory }}/allimages.tgz"
         flat: true
         run_once: yes
     - fetch:
-        src: "/home/amit/lb/alllb.tgz"
-        dest: "/home/amit/alllb.tgz"
+        src: "{{ kubernetes_package_download_dir }}/alllb.tgz"
+        dest: "{{ ansible_host_download_directory }}/alllb.tgz"
         flat: true
         run_once: yes        
 
@@ -152,7 +153,7 @@
     - name: Specifying a destination path
       ansible.builtin.fetch:
         src: /root/.kube/config
-        dest: /home/amit/.kube/
+        dest: "{{ ansible_host_kube_directory }}"
         flat: yes
     - name: Deploy longhorn
       ansible.builtin.command: kubectl apply -f https://raw.githubusercontent.com/longhorn/longhorn/v1.7.x/deploy/longhorn.yaml

@@ -52,3 +52,110 @@
     status_code: "201"
     body_format: json
   when: check_docker_hosted.status == 404
+
+- name: Docker proxy repository on nexus-oss
+  block:
+  - name: Check if proxy docker registry exist
+    uri:
+      url: "{{ docker_registry_baseurl }}/proxy/{{ item.name }}"
+      user: "{{ nexus_admin_user }}"
+      password: "{{ nexus_admin_password }}"
+      method: GET
+      force_basic_auth: yes
+      status_code: 404
+    register: "check_docker_proxy"
+    failed_when: false
+    loop: "{{ nexus_registry_docker_repositories }}"
+  - name: Debug variables
+    debug:
+      msg: "repo: {{item.name}} => {{ check_docker_proxy.results[repository_index].status }}"
+    loop:  "{{ nexus_registry_docker_repositories }}"
+    loop_control:
+      index_var: repository_index    
+
+  - name: Create a docker proxy repository on nexus-oss
+    uri:
+      url: "{{ docker_registry_baseurl }}/proxy"
+      user: "{{ nexus_admin_user }}"
+      password: "{{ nexus_admin_password }}"
+      method: POST
+      return_content: yes
+      body: 
+        name: "{{ item.name }}"
+        online: true
+        storage:
+          blobStoreName: "{{ item.storage_name | default(nexus_default_storage_name) }}"
+          strictContentTypeValidation: true
+        cleanup: 
+          policyNames: []
+        component:
+          proprietaryComponents: true
+        proxy:
+          remoteUrl: "{{ item.remote_url }}"
+          contentMaxAge: 1440
+          metadataMaxAge: 1440
+        negativeCache: 
+          enabled: true
+          timeToLive: 1440
+        httpClient: 
+          blocked: false
+          autoBlock: true
+        docker:
+          v1Enabled: false
+          forceBasicAuth: true
+        dockerProxy:
+          indexType: "{{ item.index_type | default('HUB') }}"
+          indexUrl: "{{ item.index_url | default(item.remote_url) }}"
+      force_basic_auth: yes
+      status_code: "201"
+      body_format: json
+    when: check_docker_proxy.results[repository_index].status == 404
+    loop:  "{{ nexus_registry_docker_repositories }}"
+    loop_control:
+      index_var: repository_index
+
+- name: Docker group repository on nexus-oss
+  block:
+  - name: Check if group docker registry exist
+    uri:
+      url: "{{ docker_registry_baseurl }}/group/{{ docker_registry_group_name }}"
+      user: "{{ nexus_admin_user }}"
+      password: "{{ nexus_admin_password }}"
+      method: GET
+      force_basic_auth: yes
+      status_code: 404
+    register: check_docker_group
+    failed_when: false
+
+  - name: Debug variables response check docker registry group
+    debug:
+      msg: "{{ check_docker_group }}"
+
+  - name: Setting variables for members registry group
+    set_fact:
+      docker_public_group_members: "{{ docker_public_group_members | default([docker_registry_hosted_name]) + [ item.name ] }}"
+    loop: "{{ nexus_registry_docker_repositories }}"
+
+  - name: Create a docker group repository on nexus
+    uri:
+      url: "{{ docker_registry_baseurl }}/group"
+      user: "{{ nexus_admin_user }}"
+      password: "{{ nexus_admin_password }}"
+      method: POST
+      return_content: yes
+      body: 
+        name: "{{ docker_registry_group_name }}"
+        online: true
+        storage:
+          blobStoreName: "{{ nexus_default_storage_name }}"
+          strictContentTypeValidation: true
+        group:
+          memberNames: "{{ docker_public_group_members }}"
+        docker:
+          v1Enabled: false
+          forceBasicAuth: true
+          httpPort: "{{ docker_registry_group_port }}"
+      force_basic_auth: yes
+      status_code: 201
+      body_format: json
+    when: check_docker_group.status == 404

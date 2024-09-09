@@ -24,7 +24,7 @@
     dest: /etc/yum.repos.d/docer-ce.repo
   become: true
 #kubelet kubectl kubeadm kubernetes-cni cri-tools
-- name: "Download kubernetes packages"
+- name: "Download kubernetes and scsi packages"
   yum:
     name:
       - kubelet
@@ -39,7 +39,7 @@
       - iscsi-initiator-utils
       - nfs-utils
     download_only: true
-    download_dir: "/home/amit/packages"
+    download_dir: "{{ kubernetes_package_download_dir }}"
   become: true
 
 
@@ -51,13 +51,13 @@
       - curl
       - procps-ng
     download_only: true
-    download_dir: "/home/amit/lb"
+    download_dir: "{{ lb_package_download_dir }}"
   become: true
 
 - name: "Find Containerd RPM " 
   find:
     paths:
-      - "/home/amit/packages"
+      - "{{ kubernetes_package_download_dir }}"
     patterns: 
       - "containerd*.rpm"
       - "cri-tools*.rpm"
@@ -69,7 +69,7 @@
 
 - name: Install containerd rpm from a local file
   ansible.builtin.yum:
-    name: "{{package_list}}"
+    name: "{{ package_list }}"
     state: present
   become: true
 
@@ -176,12 +176,12 @@
 
 - name: Compress all kubernetes packages rpm
   archive:
-    path: "/home/amit/packages"
-    dest: "/home/amit/packages/allpackages.tgz"
+    path: "{{ kubernetes_package_download_dir }}"
+    dest: "{{ kubernetes_package_download_dir }}/allpackages.tgz"
   become: true
 
 - name: Compress all lb packages rpm
   archive:
-    path: "/home/amit/lb"
-    dest: "/home/amit/lb/alllb.tgz"
+    path: "{{ lb_package_download_dir }}"
+    dest: "{{ lb_package_download_dir }}/alllb.tgz"
   become: true

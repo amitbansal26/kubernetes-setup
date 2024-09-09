@@ -1,0 +1,31 @@
+- name: "Set Kubernetes api version"
+  set_fact:
+    api_server_version: "{{ kubernetes_version_kubeadm }}"
+
+- name: "Set Kubernetes controller version"
+  set_fact:
+    controller_version: "{{ kubernetes_version_kubeadm }}"
+
+- name: "Set Kubernetes scheduler version"
+  set_fact:
+    scheduler_version: "{{ kubernetes_version_kubeadm }}"
+
+- name: "Set Kubernetes proxy version"
+  set_fact:
+    proxy_version: "{{ kubernetes_version_kubeadm }}"
+
+- name: "Set Kubernetes pause image version"
+  set_fact:
+    pause_version: "{{ pause_version }}"
+
+- name: "Set Kubernetes Etcd version"
+  set_fact:
+    etcd_version: "{{ etcd_version }}"
+
+- name: "Set Kubernetes Coredns version"
+  set_fact:
+    coredns_version: "{{ coredns_version }}"
+
+- name: "Set Kubernetes Calico version"
+  set_fact:
+    calico_version: "{{ calico_version }}"

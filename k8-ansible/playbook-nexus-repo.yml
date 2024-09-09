@@ -1,6 +1,23 @@
 ---
 - name: Nexus
   hosts: nexus
+  vars:
+    nexus_admin_user: admin
+    nexus_admin_password: changeme
+    nexus_default_host: 'localhost'
+    nexus_default_port: '8081'
+    nexus_registry_docker_enabled: true
+    docker_registry_hosted_name: 'docker-registry'
+    docker_registry_hosted_port: '5000'
+    docker_registry_group_name: 'docker-public-group'
+    docker_registry_group_port: '5002'
+    nexus_registry_docker_repositories:
+    - name: docker-proxy
+      remote_url: https://registry-1.docker.io
+      index_type: 'HUB'
+    - name: quay-proxy
+      remote_url: https://quay.io
+      index_type: 'REGISTRY'      
   become: true
   roles:
     - role: nexus-api-management

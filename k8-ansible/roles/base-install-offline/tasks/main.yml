@@ -1,35 +1,6 @@
 ---
-- name: "Set Kubernetes api version"
-  set_fact:
-    api_server_version: "{{ kubernetes_version_kubeadm }}"
-
-- name: "Set Kubernetes controller version"
-  set_fact:
-    controller_version: "{{ kubernetes_version_kubeadm }}"
-
-- name: "Set Kubernetes scheduler version"
-  set_fact:
-    scheduler_version: "{{ kubernetes_version_kubeadm }}"
-
-- name: "Set Kubernetes proxy version"
-  set_fact:
-    proxy_version: "{{ kubernetes_version_kubeadm }}"
-
-- name: "Set Kubernetes pause image version"
-  set_fact:
-    pause_version: "{{ pause_version }}"
-
-- name: "Set Kubernetes Etcd version"
-  set_fact:
-    etcd_version: "{{ etcd_version }}"
-
-- name: "Set Kubernetes Coredns version"
-  set_fact:
-    coredns_version: "{{ coredns_version }}"
-
-- name: "Set Kubernetes Calico version"
-  set_fact:
-    calico_version: "{{ calico_version }}"
+- name: set facts
+  include_tasks: set_kubernetes_version_facts.yaml
 
 - name: find all the rpms of kubernetes packages 
   find:
@@ -74,7 +45,7 @@
 
 - name: Create a directory with nexus_ip
   ansible.builtin.file:
-    path: "/etc/containerd/certs.d/{{ nexus_ip }}"
+    path: "/etc/containerd/certs.d/{{ nexus_ip }}:{{ nexus_group_repo_port }}"
     state: directory
     mode: '0755'
     owner: root
@@ -91,7 +62,6 @@
   become: true
   shell: |
     pause_image=kubeadm config images list | grep pause:
-
     containerd config default | sudo tee /etc/containerd/config.toml >/dev/null 2>&1
     sed -i 's/SystemdCgroup \= false/SystemdCgroup \= true/g' /etc/containerd/config.toml
     sed -i "s/pause:3.6/pause:3.9/g" /etc/containerd/config.toml

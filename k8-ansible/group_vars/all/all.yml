@@ -10,16 +10,12 @@ kubernetes_packages:
 
 kubernetes_version: '1.30'
 
-
-image_path: /home/amit/images
-
 kubernetes_pod_network:
   # Calico CNI.
   cni: 'calico'
   cidr: '20.96.0.0/12'
 
 kubernetes_apiserver_advertise_address: '172.16.16.101'  
-
 kubernetes_kubeadm_kubelet_config_file_path: '/etc/kubernetes/kubeadm-kubelet-config.yaml'
 kubernetes_config_kubelet_configuration:
   cgroupDriver: "systemd"
@@ -43,7 +39,7 @@ containerd_service_enabled: true
 kubernetes_version_kubeadm: 'v1.30.4'
 procps_package: procps-ng
 
-basedir: /home/amit
+
 tigera_operator_version: 'v1.32.3'
 etcd_version: '3.5.12-0'
 pause_version: '3.9'
@@ -54,3 +50,13 @@ nexus_ip: '172.16.16.122'
 containerd_hosts_path: "/etc/containerd/certs.d/{{ nexus_ip }}/hosts.toml"
 ansible_ssh_private_key_file: "/home/amit/.ssh/id_rsa"
 longhorn_version: "1.7.1"
+
+# All locations
+kubernetes_package_download_dir: "/home/amit/packages"
+lb_package_download_dir: "/home/amit/lb"
+image_path: /home/amit/images
+# Copy kubernetes Config on this machine
+ansible_host_kube_directory: /home/amit/.kube/
+ansible_host_download_directory: /home/amit
+# Directory where the [packages will be transferred and unzipped on remote machine
+basedir: /home/amit
