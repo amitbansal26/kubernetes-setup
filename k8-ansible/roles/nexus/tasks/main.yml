@@ -1,4 +1,9 @@
 ---
+- name: Install policy core utils
+  become: true
+  ansible.builtin.dnf:
+    name: policycoreutils-python-utils
+    state: present
 - name: Check if SystemD service is installed
   ansible.builtin.stat:
     path: /etc/systemd/system/nexus.service

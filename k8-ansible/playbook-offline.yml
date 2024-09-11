@@ -53,7 +53,7 @@
         flat: true
         run_once: yes
     - fetch:
-        src: "{{ kubernetes_package_download_dir }}/alllb.tgz"
+        src: "{{ lb_package_download_dir }}/alllb.tgz"
         dest: "{{ ansible_host_download_directory }}/alllb.tgz"
         flat: true
         run_once: yes        

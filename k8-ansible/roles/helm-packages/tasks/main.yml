@@ -54,3 +54,11 @@
     chart_version: 2.23.2
     release_namespace: default
     values: "{{ lookup('file', 'client.yaml') | from_yaml }}"
+  
+  #Install tekton operator
+- name: Deploy tekton operator
+  ansible.builtin.command: kubectl apply -f https://storage.googleapis.com/tekton-releases/operator/latest/release.yaml
+
+  #profiles: lite , all, basic
+- name: Deploy tekton operator
+  ansible.builtin.command: kubectl apply -f https://raw.githubusercontent.com/tektoncd/operator/main/config/crs/kubernetes/config/all/operator_v1alpha1_config_cr.yaml

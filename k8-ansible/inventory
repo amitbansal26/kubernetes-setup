@@ -12,7 +12,8 @@ loadbalancer1 ansible_ssh_host=172.16.16.51
 loadbalancer2 ansible_ssh_host=172.16.16.52  
 [k8s-worker]
 worker1 ansible_ssh_host=172.16.16.201  
-worker2 ansible_ssh_host=172.16.16.202 
+worker2 ansible_ssh_host=172.16.16.202
+worker3 ansible_ssh_host=172.16.16.203
 #[nexus]
 #nexus ansible_ssh_host=172.16.16.203 
 [dm]

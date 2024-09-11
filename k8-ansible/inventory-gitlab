@@ -1,0 +1,9 @@
+---
+all:
+  children:
+    gitlab:
+      hosts:
+        172.16.16.216:
+          ansible_user: root
+          ansible_become: true
+          gitlab_admin_password: 'change_me'
