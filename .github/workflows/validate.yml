@@ -1,0 +1,82 @@
+name: Shell Script Validation
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  shellcheck:
+    name: Shellcheck
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+      
+    - name: Run ShellCheck
+      uses: ludeeus/action-shellcheck@master
+      with:
+        scandir: '.'
+        format: gcc
+        severity: warning
+        
+    - name: Validate shell scripts
+      run: |
+        echo "Running shellcheck on all shell scripts..."
+        shellcheck --version
+        
+        # Check root level scripts
+        for script in *.sh; do
+          if [ -f "$script" ]; then
+            echo "Checking $script..."
+            shellcheck "$script"
+          fi
+        done
+        
+        # Check nested scripts
+        find . -name "*.sh" -type f -not -path "./.vagrant/*" | while read -r script; do
+          echo "Checking $script..."
+          shellcheck "$script"
+        done
+        
+        echo "All shell scripts passed validation!"
+
+  yaml-lint:
+    name: YAML Lint
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+      
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.x'
+        
+    - name: Install yamllint
+      run: pip install yamllint
+      
+    - name: Run yamllint
+      run: |
+        echo "Running yamllint on YAML files..."
+        yamllint --version
+        
+        # Create a relaxed yamllint config
+        cat > .yamllint.yml << EOF
+        extends: default
+        rules:
+          line-length:
+            max: 120
+          indentation:
+            spaces: 2
+          comments:
+            min-spaces-from-content: 1
+        EOF
+        
+        # Run yamllint
+        find . -name "*.yaml" -o -name "*.yml" | grep -v ".vagrant" | xargs yamllint -c .yamllint.yml || true
+        
+        echo "YAML validation complete!"

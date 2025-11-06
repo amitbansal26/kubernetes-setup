@@ -3,3 +3,4 @@
 *.box
 basebox/
 k8-ansible/.vault_pass
+.env
