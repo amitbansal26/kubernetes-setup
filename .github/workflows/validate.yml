@@ -76,7 +76,7 @@ jobs:
             min-spaces-from-content: 1
         EOF
         
-        # Run yamllint
-        find . -name "*.yaml" -o -name "*.yml" | grep -v ".vagrant" | xargs yamllint -c .yamllint.yml || true
+        # Run yamllint (informational - warnings won't fail CI)
+        find . -name "*.yaml" -o -name "*.yml" | grep -v ".vagrant" | xargs yamllint -c .yamllint.yml || echo "YAML linting completed with warnings"
         
         echo "YAML validation complete!"

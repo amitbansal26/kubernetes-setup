@@ -20,8 +20,8 @@ sudo subscription-manager register --username "$username" --password "$password"
 
 echo "##### Pull the container images #####"
 sudo kubeadm config images pull >/dev/null
-# Log both stdout and stderr for troubleshooting kubeadm init issues
-sudo kubeadm init --apiserver-advertise-address=172.16.16.100 --pod-network-cidr=20.96.0.0/12 | sudo tee /root/kubeinit.log
+# Log both stdout and stderr for troubleshooting, but suppress console output
+sudo kubeadm init --apiserver-advertise-address=172.16.16.100 --pod-network-cidr=20.96.0.0/12 2>&1 | sudo tee /root/kubeinit.log >/dev/null
 sudo kubectl --kubeconfig=/etc/kubernetes/admin.conf create -f https://raw.githubusercontent.com/projectcalico/calico/v3.27.0/manifests/tigera-operator.yaml >/dev/null
 sudo kubectl --kubeconfig=/etc/kubernetes/admin.conf apply -f https://raw.githubusercontent.com/amitbansal26/kubernetes-setup/main/calico.yaml >/dev/null
 #sudo kubectl --kubeconfig=/etc/kubernetes/admin.conf create -f https://raw.githubusercontent.com/projectcalico/calico/v3.27.0/manifests/custom-resources.yaml >/dev/null
