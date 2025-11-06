@@ -19,10 +19,9 @@ username=$1
 password=$2
 
 echo "######################################################################################################"
-echo $username
-echo $password
+echo "Starting loadbalancer setup..."
 echo "######################################################################################################"
-sudo subscription-manager register --username $username --password $password --auto-attach
+sudo subscription-manager register --username "$username" --password "$password" --auto-attach
 
 sudo dnf info haproxy -y
 sudo dnf install haproxy keepalived -y
@@ -71,6 +70,7 @@ vrrp_instance VI_1 {
     }
 }
 EOF
+# Note: The auth_pass 'mysecret' above should be changed to a secure password in production
 sudo systemctl enable --now keepalived
 
 cat >> /etc/haproxy/haproxy.cfg <<EOF

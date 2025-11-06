@@ -1,6 +1,6 @@
 #!/bin/bash
 set -euxo pipefail
-nexus_domain=$(hostname --fqdn)
+# Note: nexus_domain variable removed as it was unused
 config_authentication='nexus'
 apt-get install -y openjdk-8-jre-headless
 apt-get install -y gnupg
