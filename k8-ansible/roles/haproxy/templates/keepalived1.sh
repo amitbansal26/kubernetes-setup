@@ -1,4 +1,6 @@
-sudo cat <<EOF >/etc/keepalived/keepalived.conf
+#!/bin/bash
+# Note: Default auth_pass '1111' should be changed for production
+cat <<EOF | sudo tee /etc/keepalived/keepalived.conf >/dev/null
 global_defs {
   notification_email {
   }

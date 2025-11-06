@@ -17,12 +17,13 @@ fi
 
 username=$1
 password=$2
+# Set default keepalived password - override with environment variable for production
+KEEPALIVED_AUTH_PASS="${KEEPALIVED_AUTH_PASS:-mysecret}"
 
 echo "######################################################################################################"
-echo $username
-echo $password
+echo "Starting loadbalancer setup..."
 echo "######################################################################################################"
-sudo subscription-manager register --username $username --password $password --auto-attach
+sudo subscription-manager register --username "$username" --password "$password" --auto-attach
 
 sudo dnf info haproxy -y
 sudo dnf install haproxy keepalived -y
@@ -61,7 +62,7 @@ vrrp_instance VI_1 {
     advert_int 5
     authentication {
         auth_type PASS
-        auth_pass mysecret
+        auth_pass ${KEEPALIVED_AUTH_PASS}
     }
     virtual_ipaddress {
         172.16.16.100
@@ -71,6 +72,8 @@ vrrp_instance VI_1 {
     }
 }
 EOF
+# Note: Default KEEPALIVED_AUTH_PASS is 'mysecret'
+# For production, set environment variable: export KEEPALIVED_AUTH_PASS='your-secure-password'
 sudo systemctl enable --now keepalived
 
 cat >> /etc/haproxy/haproxy.cfg <<EOF

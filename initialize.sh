@@ -19,11 +19,10 @@ username=$1
 password=$2
 
 echo "######################################################################################################"
-echo $username
-echo $password
+echo "Starting initialization with provided credentials..."
 echo "######################################################################################################"
 
-sudo subscription-manager register --username $username --password $password --auto-attach
+sudo subscription-manager register --username "$username" --password "$password" --auto-attach
 #1. Step 1
 echo "Swap off"
 sudo swapoff -a
@@ -86,7 +85,8 @@ sed -i 's/^PasswordAuthentication .*/PasswordAuthentication yes/' /etc/ssh/sshd_
 echo 'PermitRootLogin yes' >> /etc/ssh/sshd_config
 systemctl reload sshd
 
-echo "root password"
+echo "root password setup"
+# Note: Default password is 'kubeadmin'. Change this after initial setup for security.
 echo -e "kubeadmin\nkubeadmin" | passwd root >/dev/null 2>&1
 echo "export TERM=xterm" >> /etc/bash.bashrc
 
