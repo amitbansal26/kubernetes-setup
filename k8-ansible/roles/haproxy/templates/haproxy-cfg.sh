@@ -1,3 +1,4 @@
+#!/bin/bash
 cat <<EOF >/etc/haproxy/haproxy.cfg
 frontend kubernetes-frontend
   bind *:6443
